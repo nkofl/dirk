@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexGrow: size }">
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i" @new="handleNew" @replace="handleReplace"></dashboard-block>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
     <div class="controls" v-if="type === 'panel'">
       <div class="controls__control controls__control--left" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
@@ -55,9 +55,24 @@
           bottom: 'vertical',
         };
 
-        // @todo: maybe modify the parent directly?
         if (parentType === directionMatch[direction]) {
-          this.$emit('new', color, direction, this.i);
+          // It would probably be better to emit an event but eeehhh
+          const newChildSize = 1 / (this.$parent.children.length + 1);
+          const sizeAdjustFactor = 1 - newChildSize;
+
+          this.$parent.children.forEach((child) => {
+            /* eslint-disable no-param-reassign */
+            child.size *= sizeAdjustFactor;
+          });
+
+          const spliceI = this.i + ((direction === 'right' || direction === 'bottom') ? 1 : 0);
+
+          this.$parent.children.splice(spliceI, 0, {
+            type: 'panel',
+            size: newChildSize,
+            component: Color,
+            meta: { color },
+          });
         } else {
           const newSelf = {
             type: 'panel',
@@ -75,7 +90,7 @@
           const children = (direction === 'right' || direction === 'bottom') ?
             [newSelf, newSibling] : [newSibling, newSelf];
 
-          this.$emit('replace', this.i, {
+          this.$parent.children.splice(this.i, 1, {
             type: directionMatch[direction],
             size: this.size,
             children,
@@ -87,31 +102,6 @@
       },
       handleDragleave(e) {
         e.target.classList.remove('controls__control--active');
-      },
-      handleNew(color, direction, childI) {
-        /* eslint-disable no-param-reassign */
-        /* eslint-disable no-plusplus */
-
-        const newChildSize = 1 / (this.children.length + 1);
-        const sizeAdjustFactor = 1 - newChildSize;
-
-        this.children.forEach((child) => {
-          child.size *= sizeAdjustFactor;
-        });
-
-        if (direction === 'right' || direction === 'bottom') {
-          childI++;
-        }
-
-        this.children.splice(childI, 0, {
-          type: 'panel',
-          size: newChildSize,
-          component: Color,
-          meta: { color },
-        });
-      },
-      handleReplace(childI, replacement) {
-        this.children.splice(childI, 1, replacement);
       },
     },
   };
