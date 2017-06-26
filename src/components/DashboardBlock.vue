@@ -115,8 +115,12 @@
 
     display: flex;
 
-    &--panel {
-      margin: 5px;
+    &--vertical > .dashboard__block:not(:first-child) {
+      margin-top: 10px;
+    }
+
+    &--horizontal > .dashboard__block:not(:first-child) {
+      margin-left: 10px;
     }
 
     &--horizontal, &--vertical {
