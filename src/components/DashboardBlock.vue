@@ -109,9 +109,11 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   .dashboard__block {
-    flex: 1;
+    flex: 1 1 auto;
 
     position: relative;
+
+    display: flex;
 
     &--panel {
       margin: 5px;
@@ -126,7 +128,7 @@
     }
 
     &__component {
-      height: 100%;
+      flex: 1 1 auto;
     }
 
     .controls {

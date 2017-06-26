@@ -37,10 +37,5 @@
 <style lang="scss" rel="stylesheet/scss" scoped>
   .dashboard {
     height: 500px;
-    box-sizing: border-box;
-
-    * {
-      box-sizing: border-box;
-    }
   }
 </style>
