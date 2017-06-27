@@ -3,11 +3,15 @@
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
     <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
-    <div class="controls" v-if="type === 'panel'">
-      <div class="controls__control controls__control--left" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
-      <div class="controls__control controls__control--top" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
-      <div class="controls__control controls__control--right" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
-      <div class="controls__control controls__control--bottom" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
+    <div class="drop-controls" v-if="type === 'panel'">
+      <div class="drop-controls__control drop-controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--top" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--right" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
+    </div>
+
+    <div class="hover-controls" v-if="type === 'panel'">
+      <div class="hover-controls__control hover-controls__control--delete" role="button" @click="handleDelete">x</div>
     </div>
   </div>
 </template>
@@ -42,11 +46,11 @@
     },
     methods: {
       handleDrop(e) {
-        e.target.classList.remove('controls__control--active');
+        e.target.classList.remove('drop-controls__control--active');
 
         const parentType = this.$parent.type;
         const color = e.dataTransfer.getData('text/plain');
-        const direction = e.target.className.replace(/.*controls__control--(\S+).*/, '$1');
+        const direction = e.target.className.replace(/.*drop-controls__control--(\S+).*/, '$1');
 
         const directionMatch = {
           left: 'horizontal',
@@ -98,10 +102,61 @@
         }
       },
       handleDragenter(e) {
-        e.target.classList.add('controls__control--active');
+        e.target.classList.add('drop-controls__control--active');
       },
       handleDragleave(e) {
-        e.target.classList.remove('controls__control--active');
+        e.target.classList.remove('drop-controls__control--active');
+      },
+      handleDelete() {
+        if (this.$parent.children.length === 1) {
+          // @todo: allow user to delete last block
+          console.log('cant empty dashboard yet');
+        } else if (this.$parent.children.length === 2) {
+          const parentParent = this.$parent.$parent;
+
+          if (parentParent.children) {
+            if (parentParent.children[1 - this.$parent.i].type === 'panel') {
+              const sibling = this.$parent.children[1 - this.i];
+
+              if (sibling.type === 'panel') {
+                sibling.size = this.$parent.size;
+                this.$parent.$parent.children.splice(this.$parent.i, 1, sibling);
+              } else {
+                sibling.children.forEach((child) => {
+                  // eslint-disable-next-line no-param-reassign
+                  child.size *= this.$parent.size;
+                });
+
+                this.$parent.$parent.children.splice(this.$parent.i, 1, ...sibling.children);
+              }
+            } else {
+              const parentObject = parentParent.children[this.$parent.i];
+              const sibling = parentObject.children[1 - this.i];
+              sibling.size = parentObject.size;
+
+              this.$set(parentParent.children, this.$parent.i, sibling);
+            }
+          } else {
+            // We're setting the sibling directly on the root element
+            const rootData = this.$parent.$parent.data;
+
+            const sibling = this.$parent.children[1 - this.i];
+            sibling.size = 1;
+
+            if (sibling.type === 'panel') {
+              rootData.children = [sibling];
+            } else {
+              Object.assign(rootData, sibling);
+            }
+          }
+        } else {
+          this.$parent.children.splice(this.i, 1);
+
+          this.$parent.children.forEach((child) => {
+            // eslint-disable-next-line no-param-reassign
+            child.size /= 1 - this.size;
+          });
+        }
       },
     },
   };
@@ -135,18 +190,12 @@
       flex: 1 1 auto;
     }
 
-    .controls {
+    .drop-controls, .hover-controls {
       position: absolute;
       left: 0;
       top: 0;
       right: 0;
       bottom: 0;
-
-      display: none;
-
-      .dashboard--dragging & {
-        display: block;
-      }
 
       &__control {
         position: absolute;
@@ -159,9 +208,25 @@
         color: rgba(white, 0.3);
         font-weight: bold;
         font-size: 30px;
+        line-height: 40px;
 
+        &--active, &:hover {
+          background-color: rgba(black, 0.2);
+          color: rgba(white, 0.7);
+        }
+      }
+    }
+
+    .drop-controls {
+      display: none;
+
+      .dashboard--dragging & {
+        display: block;
+      }
+
+      &__control {
         &--left, &--right {
-          width: 60px;
+          width: 40px;
           height: 100%;
         }
 
@@ -171,18 +236,36 @@
 
         &--top, &--bottom {
           width: 100%;
-          height: 60px;
+          height: 40px;
         }
 
         &--bottom {
           bottom: 0;
         }
+      }
+    }
 
-        &--active {
-          background-color: rgba(black, 0.2);
-          color: rgba(white, 0.7);
+    .hover-controls {
+      display: none;
+
+      &__control {
+        cursor: pointer;
+
+        &--delete {
+          top: 0;
+          right: 0;
+
+          width: 40px;
+          height: 40px;
         }
       }
     }
+  }
+</style>
+
+<!-- unscoped -->
+<style>
+  .dashboard:not(.dashboard--dragging) .dashboard__block--panel:hover .hover-controls {
+    display: block;
   }
 </style>
