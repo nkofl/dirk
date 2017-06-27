@@ -48,7 +48,6 @@
       handleDrop(e) {
         e.target.classList.remove('drop-controls__control--active');
 
-        const parentType = this.$parent.type;
         const color = e.dataTransfer.getData('text/plain');
         const direction = e.target.className.replace(/.*drop-controls__control--(\S+).*/, '$1');
 
@@ -58,6 +57,14 @@
           top: 'vertical',
           bottom: 'vertical',
         };
+
+        // We're at the root element, so the type could be wrong
+        if (this.$parent.children.length === 1) {
+          this.$parent.type = directionMatch[direction];
+          this.$parent.$parent.data.type = directionMatch[direction];
+        }
+
+        const parentType = this.$parent.type;
 
         if (parentType === directionMatch[direction]) {
           // It would probably be better to emit an event but eeehhh
