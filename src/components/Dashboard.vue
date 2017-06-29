@@ -37,5 +37,7 @@
 <style lang="scss" rel="stylesheet/scss" scoped>
   .dashboard {
     height: 500px;
+    margin-left: -5px;
+    margin-right: -5px;
   }
 </style>

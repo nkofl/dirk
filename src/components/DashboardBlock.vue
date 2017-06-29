@@ -1,5 +1,5 @@
 <template>
-  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexGrow: size }">
+  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexBasis: flexBasis }">
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
     <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
@@ -166,6 +166,12 @@
         }
       },
     },
+    computed: {
+      flexBasis() {
+        const percentage = `${this.size * 100}%`;
+        return this.type === 'panel' ? `calc(${percentage} - 10px)` : percentage;
+      },
+    },
   };
 </script>
 
@@ -177,12 +183,8 @@
 
     display: flex;
 
-    &--vertical > .dashboard__block:not(:first-child) {
-      margin-top: 10px;
-    }
-
-    &--horizontal > .dashboard__block:not(:first-child) {
-      margin-left: 10px;
+    &--panel {
+      margin: 5px;
     }
 
     &--horizontal, &--vertical {
