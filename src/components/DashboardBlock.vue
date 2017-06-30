@@ -1,5 +1,5 @@
 <template>
-  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexBasis: flexBasis }">
+  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexBasis: flexBasis }" ref="block">
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
     <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
@@ -13,6 +13,8 @@
     <div class="hover-controls" v-if="type === 'panel'">
       <div class="hover-controls__control hover-controls__control--delete" role="button" @click="handleDelete">x</div>
     </div>
+
+    <div class="drag-control" @mousedown="handleMouseDown"></div>
   </div>
 </template>
 
@@ -165,6 +167,35 @@
           });
         }
       },
+      handleMouseDown(e) {
+        const isHorizontal = this.$parent.type === 'horizontal';
+        const start = isHorizontal ? e.pageX : e.pageY;
+
+        const parentRect = this.$parent.$refs.block.getBoundingClientRect();
+        const parentSize = isHorizontal ? parentRect.width : parentRect.height;
+
+        const previous = this.$parent.children[this.i - 1];
+        const previousStartSize = previous.size;
+        const currentStartSize = this.size;
+
+        const mousemoveHandler = (e2) => {
+          e2.preventDefault();
+
+          const offset = (isHorizontal ? e2.pageX : e2.pageY) - start;
+          const offsetAsPercentage = offset / parentSize;
+
+          previous.size = previousStartSize + offsetAsPercentage;
+          this.$parent.children[this.i].size = currentStartSize - offsetAsPercentage;
+        };
+
+        const mouseupHandler = () => {
+          document.removeEventListener('mousemove', mousemoveHandler);
+          document.removeEventListener('mouseup', mouseupHandler);
+        };
+
+        document.addEventListener('mousemove', mousemoveHandler);
+        document.addEventListener('mouseup', mouseupHandler);
+      },
     },
     computed: {
       flexBasis() {
@@ -266,6 +297,42 @@
 
           width: 40px;
           height: 40px;
+        }
+      }
+    }
+
+    &:not(:first-child) {
+      > .drag-control {
+        position: absolute;
+
+        // Display on left
+        .dashboard__block--horizontal > & {
+          left: -5px;
+
+          width: 10px;
+          height: 100%;
+
+          cursor: ew-resize;
+        }
+
+        // Display on right
+        .dashboard__block--vertical > & {
+          top: -5px;
+
+          width: 100%;
+          height: 10px;
+
+          cursor: ns-resize;
+        }
+      }
+
+      &.dashboard__block--panel > .drag-control {
+        .dashboard__block--horizontal > & {
+          left: -10px;
+        }
+
+        .dashboard__block--vertical > & {
+          top: -10px;
         }
       }
     }
