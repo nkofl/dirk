@@ -3,15 +3,13 @@
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
     <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
-    <div class="drop-controls" v-if="type === 'panel'">
-      <div class="drop-controls__control drop-controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
-      <div class="drop-controls__control drop-controls__control--top" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
-      <div class="drop-controls__control drop-controls__control--right" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
-      <div class="drop-controls__control drop-controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
-    </div>
+    <div class="controls" v-if="type === 'panel'">
+      <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
 
-    <div class="hover-controls" v-if="type === 'panel'">
-      <div class="hover-controls__control hover-controls__control--delete" role="button" @click="handleDelete">x</div>
+      <div class="controls__control controls__control--drop controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
+      <div class="controls__control controls__control--drop controls__control--top" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
+      <div class="controls__control controls__control--drop controls__control--right" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
+      <div class="controls__control controls__control--drop controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
     </div>
 
     <div class="drag-control" @mousedown="handleMouseDown"></div>
@@ -48,7 +46,7 @@
     },
     methods: {
       handleAddDrop(e) {
-        e.target.classList.remove('drop-controls__control--active');
+        e.target.classList.remove('controls__control--active');
 
         const color = e.dataTransfer.getData('text/plain');
 
@@ -56,7 +54,7 @@
           return;
         }
 
-        const direction = e.target.className.replace(/.*drop-controls__control--(\S+).*/, '$1');
+        const direction = e.target.className.replace(/.*controls__control--(\S+).*/, '$1');
 
         const directionMatch = {
           left: 'horizontal',
@@ -116,7 +114,7 @@
         }
       },
       handleReplaceDrop(e) {
-        e.target.classList.remove('drop-controls__control--active');
+        e.target.classList.remove('controls__control--active');
 
         const color = e.dataTransfer.getData('text/plain');
 
@@ -126,7 +124,7 @@
         }
 
         // This is an add that has propagated, not a replace
-        if (e.target.classList.contains('drop-controls__control')) {
+        if (e.target.classList.contains('controls__control')) {
           return;
         }
 
@@ -137,10 +135,10 @@
         this.meta.color = color;
       },
       handleDragenter(e) {
-        e.target.classList.add('drop-controls__control--active');
+        e.target.classList.add('controls__control--active');
       },
       handleDragleave(e) {
-        e.target.classList.remove('drop-controls__control--active');
+        e.target.classList.remove('controls__control--active');
       },
       handleDelete() {
         if (this.$parent.children.length === 1) {
@@ -256,7 +254,7 @@
       flex: 1 1 auto;
     }
 
-    .drop-controls, .hover-controls {
+    .controls {
       position: absolute;
       left: 0;
       top: 0;
@@ -266,7 +264,7 @@
       &__control {
         position: absolute;
 
-        display: flex;
+        display: none;
         justify-content: center;
         align-items: center;
 
@@ -275,22 +273,17 @@
         font-weight: bold;
         font-size: 30px;
         line-height: 40px;
+        cursor: pointer;
 
         &--active, &:hover {
           background-color: rgba(black, 0.2);
           color: rgba(white, 0.7);
         }
-      }
-    }
 
-    .drop-controls {
-      display: none;
+        .dashboard--dragging &--drop {
+          display: flex;
+        }
 
-      .dashboard--dragging & {
-        display: block;
-      }
-
-      &__control {
         &--left, &--right {
           width: 40px;
           height: 100%;
@@ -308,14 +301,6 @@
         &--bottom {
           bottom: 0;
         }
-      }
-    }
-
-    .hover-controls {
-      display: none;
-
-      &__control {
-        cursor: pointer;
 
         &--delete {
           top: 0;
@@ -367,7 +352,7 @@
 
 <!-- unscoped -->
 <style>
-  .dashboard:not(.dashboard--dragging) .dashboard__block--panel:hover .hover-controls {
-    display: block;
+  .dashboard:not(.dashboard--dragging) .dashboard__block--panel:hover .controls__control--hover {
+    display: flex;
   }
 </style>
