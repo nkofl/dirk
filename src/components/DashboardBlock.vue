@@ -1,13 +1,13 @@
 <template>
-  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexBasis: flexBasis }" ref="block">
+  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
     <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
     <div class="drop-controls" v-if="type === 'panel'">
-      <div class="drop-controls__control drop-controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
-      <div class="drop-controls__control drop-controls__control--top" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
-      <div class="drop-controls__control drop-controls__control--right" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
-      <div class="drop-controls__control drop-controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--top" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--right" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
+      <div class="drop-controls__control drop-controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
     </div>
 
     <div class="hover-controls" v-if="type === 'panel'">
@@ -47,10 +47,15 @@
       },
     },
     methods: {
-      handleDrop(e) {
+      handleAddDrop(e) {
         e.target.classList.remove('drop-controls__control--active');
 
         const color = e.dataTransfer.getData('text/plain');
+
+        if (!color) {
+          return;
+        }
+
         const direction = e.target.className.replace(/.*drop-controls__control--(\S+).*/, '$1');
 
         const directionMatch = {
@@ -109,6 +114,27 @@
             children,
           });
         }
+      },
+      handleReplaceDrop(e) {
+        e.target.classList.remove('drop-controls__control--active');
+
+        const color = e.dataTransfer.getData('text/plain');
+
+        // Event has propagated, ignore
+        if (this.type !== 'panel') {
+          return;
+        }
+
+        // This is an add that has propagated, not a replace
+        if (e.target.classList.contains('drop-controls__control')) {
+          return;
+        }
+
+        if (!color) {
+          return;
+        }
+
+        this.meta.color = color;
       },
       handleDragenter(e) {
         e.target.classList.add('drop-controls__control--active');
