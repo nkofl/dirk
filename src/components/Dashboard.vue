@@ -1,5 +1,5 @@
 <template>
-  <dashboard-block :class="'dashboard dashboard--' + state" v-bind="data"></dashboard-block>
+  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="data"></dashboard-block>
 </template>
 
 <script type="text/babel">

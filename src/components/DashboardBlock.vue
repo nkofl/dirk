@@ -1,9 +1,9 @@
 <template>
-  <div :class="'dashboard__block dashboard__block--' + type" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
+  <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
     <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
 
-    <div class="controls" v-if="type === 'panel'">
+    <div class="controls" v-if="type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
 
       <div class="controls__control controls__control--drop controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
@@ -44,6 +44,9 @@
         type: Number,
       },
     },
+    data: () => ({
+      state: 'default',
+    }),
     methods: {
       handleAddDrop(e) {
         e.target.classList.remove('controls__control--active');
@@ -220,6 +223,27 @@
         document.addEventListener('mousemove', mousemoveHandler);
         document.addEventListener('mouseup', mouseupHandler);
       },
+      handleDragstart(e) {
+        if (this.type !== 'panel') {
+          return;
+        }
+
+        e.dataTransfer.setData('text/plain', this.meta.color);
+
+        this.state = 'dragging';
+
+        const dropHandler = (ei) => {
+          document.removeEventListener('drop', dropHandler);
+
+          if (ei.target !== this.$refs.draggable) {
+            this.handleDelete();
+          } else {
+            this.state = 'default';
+          }
+        };
+
+        document.addEventListener('drop', dropHandler);
+      },
     },
     computed: {
       flexBasis() {
@@ -254,12 +278,25 @@
       flex: 1 1 auto;
     }
 
+    &--dragging {
+      filter: grayscale(10%);
+      opacity: 0.4;
+
+      .dashboard--dragging & .controls__control {
+        display: none !important;
+      }
+    }
+
     .controls {
       position: absolute;
       left: 0;
       top: 0;
       right: 0;
       bottom: 0;
+
+      .dashboard--editing & {
+        cursor: move;
+      }
 
       &__control {
         position: absolute;
@@ -268,11 +305,12 @@
         justify-content: center;
         align-items: center;
 
-        background-color: rgba(black, 0.1);
-        color: rgba(white, 0.3);
         font-weight: bold;
         font-size: 30px;
         line-height: 40px;
+
+        background-color: rgba(black, 0.1);
+        color: rgba(white, 0.3);
         cursor: pointer;
 
         &--active, &:hover {
@@ -326,7 +364,7 @@
           cursor: ew-resize;
         }
 
-        // Display on right
+        // Display on top
         .dashboard__block--vertical > & {
           top: -5px;
 
