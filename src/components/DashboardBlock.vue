@@ -80,13 +80,33 @@
         const parentType = this.$parent.type;
 
         if (parentType === directionMatch[direction]) {
-          // It would probably be better to emit an event but eeehhh
-          const newChildSize = 1 / (this.$parent.children.length + 1);
-          const sizeAdjustFactor = 1 - newChildSize;
+          // This shrinks all the child elements to make room for the new one,
+          // but does so in a way that the smaller ones don't go below the
+          // minimum size
+          const isHorizontal = this.$parent.type === 'horizontal';
+          const parentRect = this.$parent.$refs.block.getBoundingClientRect();
+          const parentSize = isHorizontal ? parentRect.width : parentRect.height;
+          const minSize = minimumSizes[isHorizontal ? 'width' : 'height'];
+          const minPercent = minSize / parentSize;
+
+          /* eslint-disable no-mixed-operators */
+
+          const n = this.$parent.children.length;
+          const newChildSize = 1 / (n + 1);
+
+          const beforeAllExcess = 1 - n * minPercent;
+          const afterAllExcess = 1 - (n + 1) * minPercent;
+
+          if (afterAllExcess < 0) {
+            // @todo something more informative here: there's no space
+            return;
+          }
+
+          const sizeAdjustFactor = (afterAllExcess - (newChildSize - minPercent)) / beforeAllExcess;
 
           this.$parent.children.forEach((child) => {
             /* eslint-disable no-param-reassign */
-            child.size *= sizeAdjustFactor;
+            child.size = (child.size - minPercent) * sizeAdjustFactor + minPercent;
           });
 
           const spliceI = this.i + ((direction === 'right' || direction === 'bottom') ? 1 : 0);
