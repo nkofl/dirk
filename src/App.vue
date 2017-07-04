@@ -14,7 +14,13 @@
 
     <div class="container">
       <dashboard :data="dashboardData"></dashboard>
+
+      <div class="text-right">
+        <a class="toggle-background" @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a>
+      </div>
     </div>
+
+    <img src="http://i.imgur.com/7hMpv.jpg" class="who-turned-out-the-lights">
   </div>
 </template>
 
@@ -60,10 +66,16 @@
           },
         ],
       },
+      lightsOff: false,
     }),
     methods: {
       handleDragstart(e) {
         e.dataTransfer.setData('text/plain', e.target.style.backgroundColor);
+      },
+    },
+    watch: {
+      lightsOff() {
+        document.body.classList.toggle('lights-off', this.lightsOff);
       },
     },
     components: {
@@ -72,7 +84,7 @@
   };
 </script>
 
-<style>
+<style lang="scss" rel="stylesheet/scss">
   body {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -80,6 +92,13 @@
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+
+    transition: color 0.6s, background-color 0.6s;
+
+    &.lights-off {
+      background-color: #2c3e50;
+      color: white;
+    }
   }
 
   h1, h2 {
@@ -98,5 +117,35 @@
     margin: 5px;
 
     cursor: move;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .toggle-background {
+    text-decoration: none;
+
+    color: inherit;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .who-turned-out-the-lights {
+    width: 100px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+
+    opacity: 0;
+
+    transition: opacity 0.6s;
+
+    .lights-off & {
+      opacity: 0.4;
+    }
   }
 </style>
