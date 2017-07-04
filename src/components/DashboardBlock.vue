@@ -19,6 +19,11 @@
 <script type="text/babel">
   import Color from './Color';
 
+  const minimumSizes = {
+    height: 100,
+    width: 200,
+  };
+
   export default {
     name: 'dashboard-block',
     props: {
@@ -212,6 +217,16 @@
 
           const offset = (isHorizontal ? e2.pageX : e2.pageY) - start;
           const offsetAsPercentage = offset / parentSize;
+
+          const minPerc = minimumSizes[isHorizontal ? 'width' : 'height'] / parentSize;
+
+          if (offsetAsPercentage > 0) {
+            if (currentStartSize - offsetAsPercentage <= minPerc) {
+              return;
+            }
+          } else if (previousStartSize + offsetAsPercentage <= minPerc) {
+            return;
+          }
 
           previous.size = previousStartSize + offsetAsPercentage;
           this.$parent.children[this.i].size = currentStartSize - offsetAsPercentage;

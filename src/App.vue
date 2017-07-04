@@ -68,6 +68,9 @@
       },
       lightsOff: false,
     }),
+    mounted() {
+      window.data = this.dashboardData;
+    },
     methods: {
       handleDragstart(e) {
         e.dataTransfer.setData('text/plain', e.target.style.backgroundColor);
