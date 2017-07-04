@@ -151,7 +151,9 @@
           const parentParent = this.$parent.$parent;
 
           if (parentParent.children) {
-            if (parentParent.children[1 - this.$parent.i].type === 'panel') {
+            const parentSiblingsPanels = parentParent.children
+              .every((block, i) => i === this.$parent.i || block.type === 'panel');
+            if (parentSiblingsPanels) {
               const sibling = this.$parent.children[1 - this.i];
 
               if (sibling.type === 'panel') {
