@@ -51,5 +51,14 @@
     height: 500px;
     margin-left: -5px;
     margin-right: -5px;
+
+    &:-webkit-full-screen {
+      width: 100%;
+      height: 100%;
+
+      .lights-off & {
+        background-color: black;
+      }
+    }
   }
 </style>

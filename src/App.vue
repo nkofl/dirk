@@ -13,10 +13,11 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData" :component-getter="getComponent" :add-component="addComponent" :get-component-id="getId"></dashboard>
+      <dashboard :data="dashboardData" :component-getter="getComponent" :add-component="addComponent" :get-component-id="getId" ref="dashboard"></dashboard>
 
-      <div class="text-right">
-        <a class="toggle-background" @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a>
+      <div class="text-right control-links">
+        <p><a @click.prevent="fullScreen">Enter presenter mode</a></p>
+        <p><a @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a></p>
       </div>
     </div>
 
@@ -93,6 +94,19 @@
       getId(component) {
         return component.meta.color;
       },
+      fullScreen() {
+        const dashboardEl = this.$refs.dashboard.$el;
+
+        if (dashboardEl.requestFullscreen) {
+          dashboardEl.requestFullscreen();
+        } else if (dashboardEl.webkitRequestFullscreen) {
+          dashboardEl.webkitRequestFullscreen();
+        } else if (dashboardEl.mozRequestFullScreen) {
+          dashboardEl.mozRequestFullScreen();
+        } else if (dashboardEl.msRequestFullscreen) {
+          dashboardEl.msRequestFullscreen();
+        }
+      },
     },
     watch: {
       lightsOff() {
@@ -144,7 +158,11 @@
     text-align: right;
   }
 
-  .toggle-background {
+  .control-links p {
+    margin: 0;
+  }
+
+  .control-links a {
     text-decoration: none;
 
     color: inherit;
