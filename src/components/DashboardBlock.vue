@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
-    <component v-if="type === 'panel'" :is="component" v-bind="meta" class="dashboard__block__component"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :key="child" :i="i"></dashboard-block>
+    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component"></component>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :add-component="addComponent"  :get-component-id="getComponentId" :key="child" :i="i"></dashboard-block>
 
     <div class="controls" v-if="type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
@@ -17,8 +17,6 @@
 </template>
 
 <script type="text/babel">
-  import Color from './Color';
-
   const minimumSizes = {
     height: 100,
     width: 200,
@@ -40,13 +38,25 @@
       },
       // @todo: Validate for either component or children, not both
       component: {
-        type: Object,
+        type: String,
       },
       children: {
         type: Array,
       },
       i: {
         type: Number,
+      },
+      componentGetter: {
+        type: Function,
+        required: true,
+      },
+      addComponent: {
+        type: Function,
+        required: true,
+      },
+      getComponentId: {
+        type: Function,
+        required: true,
       },
     },
     data: () => ({
@@ -56,9 +66,9 @@
       handleAddDrop(e) {
         e.target.classList.remove('controls__control--active');
 
-        const color = e.dataTransfer.getData('text/plain');
+        const data = e.dataTransfer.getData('text/plain');
 
-        if (!color) {
+        if (!data) {
           return;
         }
 
@@ -78,6 +88,8 @@
         }
 
         const parentType = this.$parent.type;
+
+        const newComponent = this.addComponent(data);
 
         if (parentType === directionMatch[direction]) {
           // This shrinks all the child elements to make room for the new one,
@@ -111,12 +123,10 @@
 
           const spliceI = this.i + ((direction === 'right' || direction === 'bottom') ? 1 : 0);
 
-          this.$parent.children.splice(spliceI, 0, {
+          this.$parent.children.splice(spliceI, 0, Object.assign(newComponent, {
             type: 'panel',
             size: newChildSize,
-            component: Color,
-            meta: { color },
-          });
+          }));
         } else {
           const newSelf = {
             type: 'panel',
@@ -124,12 +134,10 @@
             component: this.component,
             meta: this.meta,
           };
-          const newSibling = {
+          const newSibling = Object.assign(newComponent, {
             type: 'panel',
             size: 0.5,
-            component: Color,
-            meta: { color },
-          };
+          });
 
           const children = (direction === 'right' || direction === 'bottom') ?
             [newSelf, newSibling] : [newSibling, newSelf];
@@ -144,7 +152,7 @@
       handleReplaceDrop(e) {
         e.target.classList.remove('controls__control--active');
 
-        const color = e.dataTransfer.getData('text/plain');
+        const data = e.dataTransfer.getData('text/plain');
 
         // Event has propagated, ignore
         if (this.type !== 'panel') {
@@ -156,11 +164,12 @@
           return;
         }
 
-        if (!color) {
+        if (!data) {
           return;
         }
 
-        this.meta.color = color;
+        const newComponent = this.addComponent(data);
+        Object.assign(this.$parent.children[this.i], newComponent);
       },
       handleDragenter(e) {
         e.target.classList.add('controls__control--active');
@@ -265,7 +274,8 @@
           return;
         }
 
-        e.dataTransfer.setData('text/plain', this.meta.color);
+        const id = this.getComponentId(this.$parent.children[this.i]);
+        e.dataTransfer.setData('text/plain', id);
 
         this.state = 'dragging';
 
@@ -286,6 +296,9 @@
       flexBasis() {
         const percentage = `${this.size * 100}%`;
         return this.type === 'panel' ? `calc(${percentage} - 10px)` : percentage;
+      },
+      realComponent() {
+        return this.componentGetter(this.component, this.meta);
       },
     },
   };

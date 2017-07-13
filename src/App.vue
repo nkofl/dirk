@@ -13,7 +13,7 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData"></dashboard>
+      <dashboard :data="dashboardData" :component-getter="getComponent" :add-component="addComponent" :get-component-id="getId"></dashboard>
 
       <div class="text-right">
         <a class="toggle-background" @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a>
@@ -37,7 +37,7 @@
           {
             type: 'panel',
             size: 0.4,
-            component: Color,
+            component: 'color',
             meta: {
               color: 'hsl(0, 80%, 70%)',
             },
@@ -49,7 +49,7 @@
               {
                 type: 'panel',
                 size: 0.5,
-                component: Color,
+                component: 'color',
                 meta: {
                   color: 'hsl(90, 80%, 70%)',
                 },
@@ -57,7 +57,7 @@
               {
                 type: 'panel',
                 size: 0.5,
-                component: Color,
+                component: 'color',
                 meta: {
                   color: 'hsl(210, 80%, 70%)',
                 },
@@ -74,6 +74,24 @@
     methods: {
       handleDragstart(e) {
         e.dataTransfer.setData('text/plain', e.target.style.backgroundColor);
+      },
+      getComponent(name) {
+        if (name === 'color') {
+          return Color;
+        }
+
+        return { render: h => h('p', '404 component not found') };
+      },
+      addComponent(transferData) {
+        return {
+          component: 'color',
+          meta: {
+            color: transferData,
+          },
+        };
+      },
+      getId(component) {
+        return component.meta.color;
       },
     },
     watch: {
