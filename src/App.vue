@@ -13,7 +13,7 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData" :component-getter="getComponent" ref="dashboard"></dashboard>
+      <dashboard :data="dashboardData" :component-getter="getComponent" ref="dashboard" @change="dirkChange"></dashboard>
 
       <div class="text-right control-links">
         <p><a @click.prevent="fullScreen">Enter presenter mode</a></p>
@@ -29,44 +29,48 @@
   import Color from './components/Color';
   import Dashboard from './components/Dashboard';
 
-  export default {
-    data: () => ({
-      dashboardData: {
-        type: 'horizontal',
-        size: 1,
+  const defaultData = {
+    type: 'horizontal',
+    size: 1,
+    children: [
+      {
+        type: 'panel',
+        size: 0.4,
+        component: 'color',
+        meta: {
+          color: 'hsl(0, 80%, 70%)',
+        },
+      },
+      {
+        type: 'vertical',
+        size: 0.6,
         children: [
           {
             type: 'panel',
-            size: 0.4,
+            size: 0.5,
             component: 'color',
             meta: {
-              color: 'hsl(0, 80%, 70%)',
+              color: 'hsl(90, 80%, 70%)',
             },
           },
           {
-            type: 'vertical',
-            size: 0.6,
-            children: [
-              {
-                type: 'panel',
-                size: 0.5,
-                component: 'color',
-                meta: {
-                  color: 'hsl(90, 80%, 70%)',
-                },
-              },
-              {
-                type: 'panel',
-                size: 0.5,
-                component: 'color',
-                meta: {
-                  color: 'hsl(210, 80%, 70%)',
-                },
-              },
-            ],
+            type: 'panel',
+            size: 0.5,
+            component: 'color',
+            meta: {
+              color: 'hsl(210, 80%, 70%)',
+            },
           },
         ],
       },
+    ],
+  };
+
+  const storedData = localStorage.getItem('dirk-data');
+
+  export default {
+    data: () => ({
+      dashboardData: storedData ? JSON.parse(storedData) : defaultData,
       lightsOff: false,
     }),
     mounted() {
@@ -102,13 +106,13 @@
           dashboardEl.msRequestFullscreen();
         }
       },
+      dirkChange() {
+        localStorage.setItem('dirk-data', JSON.stringify(this.dashboardData));
+      },
     },
     watch: {
       lightsOff() {
         document.body.classList.toggle('lights-off', this.lightsOff);
-      },
-      dashboardData() {
-        console.log('changeedddd');
       },
     },
     components: {

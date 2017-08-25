@@ -1,5 +1,5 @@
 <template>
-  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="data" :component-getter="componentGetter"></dashboard-block>
+  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="data" :component-getter="componentGetter" @change="$emit('change')"></dashboard-block>
 </template>
 
 <script type="text/babel">

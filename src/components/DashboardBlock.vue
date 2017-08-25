@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="child" :i="i"></dashboard-block>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="child" :i="i" @change="$emit('change')"></dashboard-block>
 
     <div class="controls" v-if="type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
@@ -140,6 +140,8 @@
             children,
           });
         }
+
+        this.$emit('change');
       },
       handleReplaceDrop(e) {
         e.target.classList.remove('controls__control--active');
@@ -162,6 +164,8 @@
 
         const newComponent = JSON.parse(data);
         Object.assign(this.$parent.children[this.i], newComponent);
+
+        this.$emit('change');
       },
       handleDragenter(e) {
         e.target.classList.add('controls__control--active');
@@ -173,6 +177,7 @@
         if (this.$parent.children.length === 1) {
           // @todo: allow user to delete last block
           console.log('cant empty dashboard yet');
+          return;
         } else if (this.$parent.children.length === 2) {
           const parentParent = this.$parent.$parent;
 
@@ -221,6 +226,8 @@
             child.size /= 1 - this.size;
           });
         }
+
+        this.$emit('change');
       },
       handleMouseDown(e) {
         const isHorizontal = this.$parent.type === 'horizontal';
@@ -256,6 +263,8 @@
         const mouseupHandler = () => {
           document.removeEventListener('mousemove', mousemoveHandler);
           document.removeEventListener('mouseup', mouseupHandler);
+
+          this.$emit('change');
         };
 
         document.addEventListener('mousemove', mousemoveHandler);
