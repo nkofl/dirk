@@ -13,7 +13,7 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData" :component-getter="getComponent" :add-component="addComponent" :get-component-id="getId" ref="dashboard"></dashboard>
+      <dashboard :data="dashboardData" :component-getter="getComponent" ref="dashboard"></dashboard>
 
       <div class="text-right control-links">
         <p><a @click.prevent="fullScreen">Enter presenter mode</a></p>
@@ -74,7 +74,13 @@
     },
     methods: {
       handleDragstart(e) {
-        e.dataTransfer.setData('text/plain', e.target.style.backgroundColor);
+        const data = {
+          component: 'color',
+          meta: {
+            color: e.target.style.backgroundColor,
+          },
+        };
+        e.dataTransfer.setData('text/plain', JSON.stringify(data));
       },
       getComponent(name) {
         if (name === 'color') {
@@ -82,17 +88,6 @@
         }
 
         return { render: h => h('p', '404 component not found') };
-      },
-      addComponent(transferData) {
-        return {
-          component: 'color',
-          meta: {
-            color: transferData,
-          },
-        };
-      },
-      getId(component) {
-        return component.meta.color;
       },
       fullScreen() {
         const dashboardEl = this.$refs.dashboard.$el;
@@ -111,6 +106,9 @@
     watch: {
       lightsOff() {
         document.body.classList.toggle('lights-off', this.lightsOff);
+      },
+      dashboardData() {
+        console.log('changeedddd');
       },
     },
     components: {

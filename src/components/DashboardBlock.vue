@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :add-component="addComponent"  :get-component-id="getComponentId" :key="child" :i="i"></dashboard-block>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="child" :i="i"></dashboard-block>
 
     <div class="controls" v-if="type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
@@ -50,14 +50,6 @@
         type: Function,
         required: true,
       },
-      addComponent: {
-        type: Function,
-        required: true,
-      },
-      getComponentId: {
-        type: Function,
-        required: true,
-      },
     },
     data: () => ({
       state: 'default',
@@ -89,7 +81,7 @@
 
         const parentType = this.$parent.type;
 
-        const newComponent = this.addComponent(data);
+        const newComponent = JSON.parse(data);
 
         if (parentType === directionMatch[direction]) {
           // This shrinks all the child elements to make room for the new one,
@@ -168,7 +160,7 @@
           return;
         }
 
-        const newComponent = this.addComponent(data);
+        const newComponent = JSON.parse(data);
         Object.assign(this.$parent.children[this.i], newComponent);
       },
       handleDragenter(e) {
@@ -274,8 +266,13 @@
           return;
         }
 
-        const id = this.getComponentId(this.$parent.children[this.i]);
-        e.dataTransfer.setData('text/plain', id);
+        const thisComponent = this.$parent.children[this.i];
+        const data = {
+          component: thisComponent.component,
+          meta: thisComponent.meta,
+        };
+
+        e.dataTransfer.setData('text/plain', JSON.stringify(data));
 
         this.state = 'dragging';
 
