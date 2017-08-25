@@ -16,8 +16,8 @@
       <dashboard :data="dashboardData" :component-getter="getComponent" ref="dashboard" @change="dirkChange"></dashboard>
 
       <div class="text-right control-links">
-        <p><a @click.prevent="fullScreen">Enter presenter mode</a></p>
         <p><a @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a></p>
+        <p v-if="dataTouched"><a @click.prevent="reset">Reset to default data</a></p>
       </div>
     </div>
 
@@ -70,7 +70,8 @@
 
   export default {
     data: () => ({
-      dashboardData: storedData ? JSON.parse(storedData) : defaultData,
+      dashboardData: JSON.parse(storedData || JSON.stringify(defaultData)),
+      dataTouched: !!storedData,
       lightsOff: false,
     }),
     mounted() {
@@ -93,21 +94,14 @@
 
         return { render: h => h('p', '404 component not found') };
       },
-      fullScreen() {
-        const dashboardEl = this.$refs.dashboard.$el;
-
-        if (dashboardEl.requestFullscreen) {
-          dashboardEl.requestFullscreen();
-        } else if (dashboardEl.webkitRequestFullscreen) {
-          dashboardEl.webkitRequestFullscreen();
-        } else if (dashboardEl.mozRequestFullScreen) {
-          dashboardEl.mozRequestFullScreen();
-        } else if (dashboardEl.msRequestFullscreen) {
-          dashboardEl.msRequestFullscreen();
-        }
-      },
       dirkChange() {
         localStorage.setItem('dirk-data', JSON.stringify(this.dashboardData));
+        this.dataTouched = true;
+      },
+      reset() {
+        localStorage.setItem('dirk-data', JSON.stringify(defaultData));
+        this.dashboardData = JSON.parse(JSON.stringify(defaultData));
+        this.dataTouched = false;
       },
     },
     watch: {
