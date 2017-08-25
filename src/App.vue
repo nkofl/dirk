@@ -6,7 +6,7 @@
       <div
         v-for="n in 12"
         class="color-swatch__color"
-        :style="{ backgroundColor: 'hsl(' + (n - 1) * 30 + ', 80%, 70%)' }"
+        :style="{ backgroundColor: 'hsl(' + (n - 1) * 30 + ', 80%, 73%)' }"
         @dragstart="handleDragstart"
         draggable="true"
       ></div>
@@ -38,7 +38,7 @@
         size: 0.4,
         component: 'color',
         meta: {
-          color: 'hsl(0, 80%, 70%)',
+          color: 'hsl(0, 80%, 73%)',
         },
       },
       {
@@ -50,7 +50,7 @@
             size: 0.5,
             component: 'color',
             meta: {
-              color: 'hsl(90, 80%, 70%)',
+              color: 'hsl(90, 80%, 73%)',
             },
           },
           {
@@ -58,7 +58,7 @@
             size: 0.5,
             component: 'color',
             meta: {
-              color: 'hsl(210, 80%, 70%)',
+              color: 'hsl(210, 80%, 73%)',
             },
           },
         ],
