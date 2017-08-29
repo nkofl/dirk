@@ -3,7 +3,7 @@
 </template>
 
 <script type="text/babel">
-  import DashboardBlock from './DashboardBlock';
+  import DashboardBlock from './DashboardBlock.vue';
 
   export default {
     props: {

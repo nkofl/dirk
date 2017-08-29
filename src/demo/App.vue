@@ -26,8 +26,8 @@
 </template>
 
 <script>
-  import Color from './components/Color';
-  import Dashboard from './components/Dashboard';
+  import Color from './Color.vue';
+  import Dashboard from '../Dashboard.vue';
 
   const defaultData = {
     type: 'horizontal',
