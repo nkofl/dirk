@@ -40,9 +40,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   .dashboard {
-    height: 500px;
-    margin-left: -5px;
-    margin-right: -5px;
+    height: 100%;
 
     &:-webkit-full-screen {
       width: 100%;
