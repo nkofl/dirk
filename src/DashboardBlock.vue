@@ -1,9 +1,9 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" @change="$emit('change')"></dashboard-block>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editable="editable" @change="$emit('change')"></dashboard-block>
 
-    <div class="controls" v-if="type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
+    <div class="controls" v-if="editable && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
 
       <div class="controls__control controls__control--drop controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
@@ -48,6 +48,10 @@
       },
       componentGetter: {
         type: Function,
+        required: true,
+      },
+      editable: {
+        type: Boolean,
         required: true,
       },
     },
@@ -144,6 +148,10 @@
         this.$emit('change');
       },
       handleReplaceDrop(e) {
+        if (!this.editable) {
+          return;
+        }
+
         e.target.classList.remove('controls__control--active');
 
         const data = e.dataTransfer.getData('text/plain');

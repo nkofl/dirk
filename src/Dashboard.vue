@@ -1,5 +1,5 @@
 <template>
-  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="data" :component-getter="componentGetter" @change="$emit('change')"></dashboard-block>
+  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="data" :component-getter="componentGetter" :editable="editable" @change="$emit('change')"></dashboard-block>
 </template>
 
 <script type="text/babel">
@@ -15,13 +15,19 @@
         type: Function,
         required: true,
       },
+      editable: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: () => ({
       state: 'none',
     }),
     mounted() {
       document.addEventListener('dragstart', () => {
-        this.state = 'dragging';
+        if (this.editable) {
+          this.state = 'dragging';
+        }
       });
 
       document.addEventListener('dragover', (e) => {

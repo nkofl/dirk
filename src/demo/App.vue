@@ -13,7 +13,7 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData" :component-getter="getComponent" ref="dashboard" @change="dirkChange"></dashboard>
+      <dashboard :data="dashboardData" :component-getter="getComponent" :editable="true" ref="dashboard" @change="dirkChange"></dashboard>
 
       <div class="text-right control-links">
         <p><a @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a></p>
@@ -72,10 +72,11 @@
     data: () => ({
       dashboardData: JSON.parse(storedData || JSON.stringify(defaultData)),
       dataTouched: !!storedData,
-      lightsOff: false,
+      lightsOff: localStorage.getItem('lights-off') === 'true',
     }),
     mounted() {
       window.data = this.dashboardData;
+      document.body.classList.toggle('lights-off', this.lightsOff);
     },
     methods: {
       handleDragstart(e) {
@@ -99,7 +100,7 @@
         this.dataTouched = true;
       },
       reset() {
-        localStorage.setItem('dirk-data', JSON.stringify(defaultData));
+        localStorage.removeItem('dirk-data');
         this.dashboardData = JSON.parse(JSON.stringify(defaultData));
         this.dataTouched = false;
       },
@@ -107,6 +108,7 @@
     watch: {
       lightsOff() {
         document.body.classList.toggle('lights-off', this.lightsOff);
+        localStorage.setItem('lights-off', this.lightsOff);
       },
     },
     components: {
@@ -139,6 +141,7 @@
   .container {
     margin: 20px auto;
     width: 1000px;
+    height: 600px;
   }
 
   .color-swatch__color {
