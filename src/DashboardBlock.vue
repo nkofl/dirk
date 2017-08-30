@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
-    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editable="editable" @change="$emit('change')"></dashboard-block>
+    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editable="editable"></component>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editable="editable" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
 
     <div class="controls" v-if="editable && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
@@ -266,6 +266,8 @@
 
           previous.size = previousStartSize + offsetAsPercentage;
           this.$parent.children[this.i].size = currentStartSize - offsetAsPercentage;
+
+          this.$emit('changing');
         };
 
         const mouseupHandler = () => {
