@@ -12,7 +12,7 @@
       <div class="controls__control controls__control--drop controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
     </div>
 
-    <div class="drag-control" @mousedown="handleMouseDown"></div>
+    <div v-if="editable" class="drag-control" @mousedown="handleMouseDown"></div>
   </div>
 </template>
 
