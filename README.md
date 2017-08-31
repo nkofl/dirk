@@ -109,6 +109,7 @@ The contents of the meta object will be passed into the component as props—eff
 
 @todo:
 
+- complicated example (object from demo)
 - toggling editing state
 - adding new
 - saving config
