@@ -1,8 +1,9 @@
 <template>
   <div>
-    <h1>vue dashboard</h1>
+    <h1>dirk dashboard</h1>
+    <p>A simple dashboard layout tool powered by Vue.</p>
 
-    <div class="color-swatch">
+    <div :class="['color-swatch', { 'color-swatch--frozen': !editing }]">
       <div
         v-for="n in 12"
         class="color-swatch__color"
@@ -13,11 +14,16 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData" :component-getter="getComponent" :editable="true" ref="dashboard" @change="dirkChange"></dashboard>
+      <dashboard :data="dashboardData" :component-getter="getComponent" :editing="true" ref="dashboard" @change="dirkChange"></dashboard>
 
-      <div class="text-right control-links">
-        <p><a @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a></p>
-        <p v-if="dataTouched"><a @click.prevent="reset">Reset to default data</a></p>
+      <div class="control-links">
+        <div class="left">
+          <p v-if="dataTouched"><a @click.prevent="reset">Reset to default data</a></p>
+        </div>
+        <div class="right">
+          <p><a @click.prevent="lightsOff = !lightsOff">Turn {{ lightsOff ? 'on' : 'out' }} the lights</a></p>
+          <p><a @click.prevent="fullScreen">Go full screen</a></p>
+        </div>
       </div>
     </div>
 
@@ -104,6 +110,19 @@
         this.dashboardData = JSON.parse(JSON.stringify(defaultData));
         this.dataTouched = false;
       },
+      fullScreen() {
+        const dashboardEl = this.$refs.dashboard.$el;
+
+        if (dashboardEl.requestFullscreen) {
+          dashboardEl.requestFullscreen();
+        } else if (dashboardEl.webkitRequestFullscreen) {
+          dashboardEl.webkitRequestFullscreen();
+        } else if (dashboardEl.mozRequestFullScreen) {
+          dashboardEl.mozRequestFullScreen();
+        } else if (dashboardEl.msRequestFullscreen) {
+          dashboardEl.msRequestFullscreen();
+        }
+      },
     },
     watch: {
       lightsOff() {
@@ -124,7 +143,6 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
 
     transition: color 0.6s, background-color 0.6s;
 
@@ -134,8 +152,15 @@
     }
   }
 
-  h1, h2 {
+  h1 {
     font-weight: normal;
+    margin-top: 40px;
+    margin-bottom: 0;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 40px;
   }
 
   .container {
@@ -153,8 +178,15 @@
     cursor: move;
   }
 
-  .text-right {
-    text-align: right;
+  .control-links {
+    .left {
+      float: left;
+      text-align: left;
+    }
+
+    .right {
+      text-align: right;
+    }
   }
 
   .control-links p {

@@ -1,9 +1,9 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
-    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editable="editable"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editable="editable" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
+    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editing="editing"></component>
+    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
 
-    <div class="controls" v-if="editable && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
+    <div class="controls" v-if="editing && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
 
       <div class="controls__control controls__control--drop controls__control--left" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
@@ -12,7 +12,7 @@
       <div class="controls__control controls__control--drop controls__control--bottom" role="button" @dragenter="handleDragenter" @dragleave="handleDragleave" @drop="handleAddDrop">+</div>
     </div>
 
-    <div v-if="editable" class="drag-control" @mousedown="handleMouseDown"></div>
+    <div v-if="editing" class="drag-control" @mousedown="handleMouseDown"></div>
   </div>
 </template>
 
@@ -50,7 +50,7 @@
         type: Function,
         required: true,
       },
-      editable: {
+      editing: {
         type: Boolean,
         required: true,
       },
@@ -148,7 +148,7 @@
         this.$emit('change');
       },
       handleReplaceDrop(e) {
-        if (!this.editable) {
+        if (!this.editing) {
           return;
         }
 
