@@ -3,7 +3,7 @@
     <h1>dirk dashboard</h1>
     <p>A simple dashboard layout tool powered by Vue.</p>
 
-    <div :class="['color-swatch', { 'color-swatch--frozen': !editing }]">
+    <div class="color-swatch">
       <div
         v-for="n in 12"
         class="color-swatch__color"
