@@ -33,6 +33,7 @@
 
 <script>
   import Color from './Color.vue';
+  import Empty from './Empty.vue';
   import Dashboard from '../Dashboard.vue';
 
   const defaultData = {
@@ -97,6 +98,10 @@
       getComponent(name) {
         if (name === 'color') {
           return Color;
+        }
+
+        if (name === 'empty-dashboard') {
+          return Empty;
         }
 
         return { render: h => h('p', '404 component not found') };
@@ -179,6 +184,8 @@
   }
 
   .control-links {
+    margin-top: 4px;
+
     .left {
       float: left;
       text-align: left;

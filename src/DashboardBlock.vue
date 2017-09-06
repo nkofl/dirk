@@ -1,7 +1,8 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editing="editing"></component>
-    <dashboard-block v-else v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
+    <dashboard-block v-else-if="children.length" v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
+    <component v-else :is="emptyDashboard" class="dashboard__block__component dashboard__block__component--empty"></component>
 
     <div class="controls" v-if="editing && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
       <div class="controls__control controls__control--hover controls__control--delete" role="button" @click="handleDelete">x</div>
@@ -157,7 +158,7 @@
         const data = e.dataTransfer.getData('text/plain');
 
         // Event has propagated, ignore
-        if (this.type !== 'panel') {
+        if (this.type !== 'panel' && this.children.length) {
           return;
         }
 
@@ -171,7 +172,16 @@
         }
 
         const newComponent = JSON.parse(data);
-        Object.assign(this.$parent.children[this.i], newComponent);
+
+        if (this.type === 'panel') {
+          Object.assign(this.$parent.children[this.i], newComponent);
+        } else {
+          // This is a specific case just for empty dashboards
+          this.children.push(Object.assign(newComponent, {
+            type: 'panel',
+            size: 1,
+          }));
+        }
 
         this.$emit('change');
       },
@@ -183,9 +193,7 @@
       },
       handleDelete() {
         if (this.$parent.children.length === 1) {
-          // @todo: allow user to delete last block
-          console.log('cant empty dashboard yet');
-          return;
+          this.$parent.children.splice(0, 1);
         } else if (this.$parent.children.length === 2) {
           const parentParent = this.$parent.$parent;
 
@@ -315,6 +323,9 @@
       },
       realComponent() {
         return this.componentGetter(this.component, this.meta);
+      },
+      emptyDashboard() {
+        return this.componentGetter('empty-dashboard');
       },
     },
   };
