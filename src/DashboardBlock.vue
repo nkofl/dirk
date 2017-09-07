@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editing="editing"></component>
-    <dashboard-block v-else-if="children.length" v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="i" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
+    <dashboard-block v-else-if="children.length" v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="childKey(child)" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
     <component v-else :is="emptyDashboard" class="dashboard__block__component dashboard__block__component--empty"></component>
 
     <div class="controls" v-if="editing && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
@@ -22,6 +22,8 @@
     height: 100,
     width: 200,
   };
+
+  const keyLookup = new WeakMap();
 
   export default {
     name: 'dashboard-block',
@@ -315,6 +317,16 @@
 
         document.addEventListener('drop', dropHandler);
       },
+      childKey(child) {
+        let key = keyLookup.get(child);
+
+        if (!key) {
+          key = Math.random();
+          keyLookup.set(child, key);
+        }
+
+        return key;
+      }
     },
     computed: {
       flexBasis() {
