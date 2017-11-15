@@ -1325,8 +1325,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       e.preventDefault();
     }, false);
 
-    document.addEventListener('drop', function () {
+    document.addEventListener('drop', function (e) {
       _this.state = 'none';
+
+      try {
+        var data = JSON.parse(e.dataTransfer.getData('text/plain'));
+
+        if (data.component) {
+          e.preventDefault();
+        }
+      } catch (e) {}
     });
   },
 

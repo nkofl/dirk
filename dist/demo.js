@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "d9a73374985887204af6"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "eed09b64771eb69e8e30"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -19940,8 +19940,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       e.preventDefault();
     }, false);
 
-    document.addEventListener('drop', function () {
+    document.addEventListener('drop', function (e) {
       _this.state = 'none';
+
+      try {
+        var data = JSON.parse(e.dataTransfer.getData('text/plain'));
+
+        if (data.component) {
+          e.preventDefault();
+        }
+      } catch (e) {}
     });
   },
 
