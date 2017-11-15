@@ -71,8 +71,6 @@
           return;
         }
 
-        e.preventDefault();
-
         const direction = e.target.className.replace(/.*controls__control--(\S+).*/, '$1');
 
         const directionMatch = {

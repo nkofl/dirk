@@ -34,8 +34,17 @@
         e.preventDefault();
       }, false);
 
-      document.addEventListener('drop', () => {
+      document.addEventListener('drop', (e) => {
         this.state = 'none';
+
+        try {
+          const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+
+          if (data.component) {
+            e.preventDefault();
+          }
+        } catch (e) {}
+
       });
     },
     components: {
