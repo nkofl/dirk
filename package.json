@@ -1,6 +1,6 @@
 {
   "name": "dirk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A dashboard configuration tool",
   "author": "Callum Macrae <callum@samknows.com>",
   "main": "./dist/dashboard.js",
