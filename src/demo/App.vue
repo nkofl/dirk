@@ -93,7 +93,7 @@
             color: e.target.style.backgroundColor,
           },
         };
-        e.dataTransfer.setData('text/plain', JSON.stringify(data));
+        e.dataTransfer.setData('text', JSON.stringify(data));
       },
       getComponent(name) {
         if (name === 'color') {

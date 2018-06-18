@@ -38,7 +38,7 @@
         this.state = 'none';
 
         try {
-          const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+          const data = JSON.parse(e.dataTransfer.getData('text'));
 
           if (data.component) {
             e.preventDefault();

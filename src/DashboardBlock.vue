@@ -65,7 +65,7 @@
       handleAddDrop(e) {
         e.target.classList.remove('controls__control--active');
 
-        const data = e.dataTransfer.getData('text/plain');
+        const data = e.dataTransfer.getData('text');
 
         if (!data) {
           return;
@@ -157,7 +157,7 @@
 
         e.target.classList.remove('controls__control--active');
 
-        const data = e.dataTransfer.getData('text/plain');
+        const data = e.dataTransfer.getData('text');
 
         // Event has propagated, ignore
         if (this.type !== 'panel' && this.children.length) {
@@ -301,7 +301,7 @@
           meta: thisComponent.meta,
         };
 
-        e.dataTransfer.setData('text/plain', JSON.stringify(data));
+        e.dataTransfer.setData('text', JSON.stringify(data));
 
         this.state = 'dragging';
 
@@ -446,6 +446,7 @@
         // Display on left
         .dashboard__block--horizontal > & {
           left: -5px;
+          top: 0;
 
           width: 10px;
           height: 100%;
@@ -456,6 +457,7 @@
         // Display on top
         .dashboard__block--vertical > & {
           top: -5px;
+          left: 0;
 
           width: 100%;
           height: 10px;
