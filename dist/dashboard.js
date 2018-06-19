@@ -1329,7 +1329,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       _this.state = 'none';
 
       try {
-        var data = JSON.parse(e.dataTransfer.getData('text/plain'));
+        var data = JSON.parse(e.dataTransfer.getData('text'));
 
         if (data.component) {
           e.preventDefault();
@@ -1412,7 +1412,7 @@ var keyLookup = new __WEBPACK_IMPORTED_MODULE_3_babel_runtime_core_js_weak_map__
     handleAddDrop: function handleAddDrop(e) {
       e.target.classList.remove('controls__control--active');
 
-      var data = e.dataTransfer.getData('text/plain');
+      var data = e.dataTransfer.getData('text');
 
       if (!data) {
         return;
@@ -1495,7 +1495,7 @@ var keyLookup = new __WEBPACK_IMPORTED_MODULE_3_babel_runtime_core_js_weak_map__
 
       e.target.classList.remove('controls__control--active');
 
-      var data = e.dataTransfer.getData('text/plain');
+      var data = e.dataTransfer.getData('text');
 
       if (this.type !== 'panel' && this.children.length) {
         return;
@@ -1642,7 +1642,7 @@ var keyLookup = new __WEBPACK_IMPORTED_MODULE_3_babel_runtime_core_js_weak_map__
         meta: thisComponent.meta
       };
 
-      e.dataTransfer.setData('text/plain', __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()(data));
+      e.dataTransfer.setData('text', __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()(data));
 
       this.state = 'dragging';
 
@@ -2653,7 +2653,7 @@ exports = module.exports = __webpack_require__(27)(undefined);
 
 
 // module
-exports.push([module.i, "\n.dashboard__block[data-v-7ac46f26] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.dashboard__block--panel[data-v-7ac46f26] {\n    margin: 5px;\n}\n.dashboard__block--horizontal[data-v-7ac46f26], .dashboard__block--vertical[data-v-7ac46f26] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n}\n.dashboard__block--vertical[data-v-7ac46f26] {\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n}\n.dashboard__block__component[data-v-7ac46f26] {\n    -webkit-box-flex: 1;\n        -ms-flex: 1 1 auto;\n            flex: 1 1 auto;\n}\n.dashboard__block--dragging[data-v-7ac46f26] {\n    -webkit-filter: grayscale(10%);\n            filter: grayscale(10%);\n    opacity: 0.4;\n}\n.dashboard--dragging .dashboard__block--dragging .controls__control[data-v-7ac46f26] {\n      display: none !important;\n}\n.dashboard__block .controls[data-v-7ac46f26] {\n    position: absolute;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n}\n.dashboard--editing .dashboard__block .controls[data-v-7ac46f26] {\n      cursor: move;\n}\n.dashboard__block .controls__control[data-v-7ac46f26] {\n      position: absolute;\n      display: none;\n      -webkit-box-pack: center;\n          -ms-flex-pack: center;\n              justify-content: center;\n      -webkit-box-align: center;\n          -ms-flex-align: center;\n              align-items: center;\n      font-weight: bold;\n      font-size: 30px;\n      line-height: 40px;\n      background-color: rgba(0, 0, 0, 0.1);\n      color: rgba(255, 255, 255, 0.3);\n      cursor: pointer;\n}\n.dashboard__block .controls__control--active[data-v-7ac46f26], .dashboard__block .controls__control[data-v-7ac46f26]:hover {\n        background-color: rgba(0, 0, 0, 0.2);\n        color: rgba(255, 255, 255, 0.7);\n}\n.dashboard--dragging .dashboard__block .controls__control--drop[data-v-7ac46f26] {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n}\n.dashboard__block .controls__control--left[data-v-7ac46f26], .dashboard__block .controls__control--right[data-v-7ac46f26] {\n        width: 40px;\n        height: 100%;\n}\n.dashboard__block .controls__control--right[data-v-7ac46f26] {\n        right: 0;\n}\n.dashboard__block .controls__control--top[data-v-7ac46f26], .dashboard__block .controls__control--bottom[data-v-7ac46f26] {\n        width: 100%;\n        height: 40px;\n}\n.dashboard__block .controls__control--bottom[data-v-7ac46f26] {\n        bottom: 0;\n}\n.dashboard__block .controls__control--delete[data-v-7ac46f26] {\n        top: 0;\n        right: 0;\n        width: 40px;\n        height: 40px;\n}\n.dashboard__block:not(:first-child) > .drag-control[data-v-7ac46f26] {\n    position: absolute;\n}\n.dashboard__block--horizontal > .dashboard__block:not(:first-child) > .drag-control[data-v-7ac46f26] {\n      left: -5px;\n      width: 10px;\n      height: 100%;\n      cursor: ew-resize;\n}\n.dashboard__block--vertical > .dashboard__block:not(:first-child) > .drag-control[data-v-7ac46f26] {\n      top: -5px;\n      width: 100%;\n      height: 10px;\n      cursor: ns-resize;\n}\n.dashboard__block--horizontal > .dashboard__block:not(:first-child).dashboard__block--panel > .drag-control[data-v-7ac46f26] {\n    left: -10px;\n}\n.dashboard__block--vertical > .dashboard__block:not(:first-child).dashboard__block--panel > .drag-control[data-v-7ac46f26] {\n    top: -10px;\n}\n", ""]);
+exports.push([module.i, "\n.dashboard__block[data-v-7ac46f26] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  position: relative;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.dashboard__block--panel[data-v-7ac46f26] {\n    margin: 5px;\n}\n.dashboard__block--horizontal[data-v-7ac46f26], .dashboard__block--vertical[data-v-7ac46f26] {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n}\n.dashboard__block--vertical[data-v-7ac46f26] {\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n}\n.dashboard__block__component[data-v-7ac46f26] {\n    -webkit-box-flex: 1;\n        -ms-flex: 1 1 auto;\n            flex: 1 1 auto;\n}\n.dashboard__block--dragging[data-v-7ac46f26] {\n    -webkit-filter: grayscale(10%);\n            filter: grayscale(10%);\n    opacity: 0.4;\n}\n.dashboard--dragging .dashboard__block--dragging .controls__control[data-v-7ac46f26] {\n      display: none !important;\n}\n.dashboard__block .controls[data-v-7ac46f26] {\n    position: absolute;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n}\n.dashboard--editing .dashboard__block .controls[data-v-7ac46f26] {\n      cursor: move;\n}\n.dashboard__block .controls__control[data-v-7ac46f26] {\n      position: absolute;\n      display: none;\n      -webkit-box-pack: center;\n          -ms-flex-pack: center;\n              justify-content: center;\n      -webkit-box-align: center;\n          -ms-flex-align: center;\n              align-items: center;\n      font-weight: bold;\n      font-size: 30px;\n      line-height: 40px;\n      background-color: rgba(0, 0, 0, 0.1);\n      color: rgba(255, 255, 255, 0.3);\n      cursor: pointer;\n}\n.dashboard__block .controls__control--active[data-v-7ac46f26], .dashboard__block .controls__control[data-v-7ac46f26]:hover {\n        background-color: rgba(0, 0, 0, 0.2);\n        color: rgba(255, 255, 255, 0.7);\n}\n.dashboard--dragging .dashboard__block .controls__control--drop[data-v-7ac46f26] {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n}\n.dashboard__block .controls__control--left[data-v-7ac46f26], .dashboard__block .controls__control--right[data-v-7ac46f26] {\n        width: 40px;\n        height: 100%;\n}\n.dashboard__block .controls__control--right[data-v-7ac46f26] {\n        right: 0;\n}\n.dashboard__block .controls__control--top[data-v-7ac46f26], .dashboard__block .controls__control--bottom[data-v-7ac46f26] {\n        width: 100%;\n        height: 40px;\n}\n.dashboard__block .controls__control--bottom[data-v-7ac46f26] {\n        bottom: 0;\n}\n.dashboard__block .controls__control--delete[data-v-7ac46f26] {\n        top: 0;\n        right: 0;\n        width: 40px;\n        height: 40px;\n}\n.dashboard__block:not(:first-child) > .drag-control[data-v-7ac46f26] {\n    position: absolute;\n}\n.dashboard__block--horizontal > .dashboard__block:not(:first-child) > .drag-control[data-v-7ac46f26] {\n      left: -5px;\n      top: 0;\n      width: 10px;\n      height: 100%;\n      cursor: ew-resize;\n}\n.dashboard__block--vertical > .dashboard__block:not(:first-child) > .drag-control[data-v-7ac46f26] {\n      top: -5px;\n      left: 0;\n      width: 100%;\n      height: 10px;\n      cursor: ns-resize;\n}\n.dashboard__block--horizontal > .dashboard__block:not(:first-child).dashboard__block--panel > .drag-control[data-v-7ac46f26] {\n    left: -10px;\n}\n.dashboard__block--vertical > .dashboard__block:not(:first-child).dashboard__block--panel > .drag-control[data-v-7ac46f26] {\n    top: -10px;\n}\n", ""]);
 
 // exports
 
