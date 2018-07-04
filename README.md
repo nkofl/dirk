@@ -252,6 +252,13 @@ The dashboard component also emits two events: `changed` and `changing`.
 - The `changing` event event is emitted when the user is currently dragging the side of a panel to resize it. This event is useful for handling the aspect ratio of a component - but be careful not to do anything too heavy here or the resize will feel jerky.
 
 
+## Browser support
+
+Dirk is tested in all modern desktop browsers, all the way down to IE11. We're using it on our production website and shipping it to clients who use IE, so it should be pretty stable.
+
+Mobile support isn't as good: while everything displays, no android browsers and only the latest iOS browser have support for the drag and drop API at the time of writing, so you can't really enable editing on mobile.
+
+
 ## License
 
 Dirk is released by [SamKnows] under the MIT license.

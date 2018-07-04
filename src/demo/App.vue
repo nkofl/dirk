@@ -2,6 +2,7 @@
   <div>
     <h1>dirk dashboard</h1>
     <p>A simple dashboard layout tool powered by Vue.</p>
+    <p>Source and docs on GitHub: <a href="https://github.com/samknows/dirk">samknows/dirk</a>.</p>
 
     <div class="color-swatch">
       <div
@@ -27,7 +28,7 @@
       </div>
     </div>
 
-    <img src="http://i.imgur.com/7hMpv.jpg" class="who-turned-out-the-lights">
+    <img src="http://i.imgur.com/7hMpv.jpg" class="who-turned-out-the-lights" title="Who turned out the lights?" alt="Who turned out the lights?">
   </div>
 </template>
 
@@ -164,7 +165,11 @@
   }
 
   p {
-    margin-top: 0;
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  p + p {
     margin-bottom: 40px;
   }
 
