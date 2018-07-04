@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "3ec0a0e34791cbf35f91"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "47e12d3b3a1b64304c1c"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -9238,7 +9238,7 @@ exports = module.exports = __webpack_require__(14)(undefined);
 
 
 // module
-exports.push([module.i, "\nbody {\n  font-family: 'Avenir', Helvetica, Arial, sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  text-align: center;\n  color: #2c3e50;\n  transition: color 0.6s, background-color 0.6s;\n}\nbody.lights-off {\n    background-color: #2c3e50;\n    color: white;\n}\nh1 {\n  font-weight: normal;\n  margin-top: 40px;\n  margin-bottom: 0;\n}\np {\n  margin-top: 0;\n  margin-bottom: 40px;\n}\n.container {\n  margin: 20px auto;\n  width: 1000px;\n  height: 600px;\n}\n.color-swatch__color {\n  display: inline-block;\n  width: 40px;\n  height: 40px;\n  margin: 5px;\n  cursor: move;\n}\n.control-links {\n  margin-top: 4px;\n}\n.control-links .left {\n    float: left;\n    text-align: left;\n}\n.control-links .right {\n    text-align: right;\n}\n.control-links p {\n  margin: 0;\n}\n.control-links a {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.control-links a:hover {\n    text-decoration: underline;\n}\n.who-turned-out-the-lights {\n  width: 100px;\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  opacity: 0;\n  transition: opacity 0.6s;\n}\n.lights-off .who-turned-out-the-lights {\n    opacity: 0.4;\n}\n", ""]);
+exports.push([module.i, "\nbody {\n  font-family: 'Avenir', Helvetica, Arial, sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  text-align: center;\n  color: #2c3e50;\n  transition: color 0.6s, background-color 0.6s;\n}\nbody.lights-off {\n    background-color: #2c3e50;\n    color: white;\n}\nh1 {\n  font-weight: normal;\n  margin-top: 40px;\n  margin-bottom: 0;\n}\np {\n  margin-top: 0.5em;\n  margin-bottom: 0;\n}\np + p {\n  margin-bottom: 40px;\n}\n.container {\n  margin: 20px auto;\n  width: 1000px;\n  height: 600px;\n}\n.color-swatch__color {\n  display: inline-block;\n  width: 40px;\n  height: 40px;\n  margin: 5px;\n  cursor: move;\n}\n.control-links {\n  margin-top: 4px;\n}\n.control-links .left {\n    float: left;\n    text-align: left;\n}\n.control-links .right {\n    text-align: right;\n}\n.control-links p {\n  margin: 0;\n}\n.control-links a {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.control-links a:hover {\n    text-decoration: underline;\n}\n.who-turned-out-the-lights {\n  width: 100px;\n  position: fixed;\n  bottom: 0;\n  right: 0;\n  opacity: 0;\n  transition: opacity 0.6s;\n}\n.lights-off .who-turned-out-the-lights {\n    opacity: 0.4;\n}\n", ""]);
 
 // exports
 
@@ -21615,7 +21615,7 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('h1', [_vm._v("dirk dashboard")]), _vm._v(" "), _c('p', [_vm._v("A simple dashboard layout tool powered by Vue.")]), _vm._v(" "), _c('div', {
+  return _c('div', [_c('h1', [_vm._v("dirk dashboard")]), _vm._v(" "), _c('p', [_vm._v("A simple dashboard layout tool powered by Vue.")]), _vm._v(" "), _vm._m(0), _vm._v(" "), _c('div', {
     staticClass: "color-swatch"
   }, _vm._l((12), function(n) {
     return _c('div', {
@@ -21672,10 +21672,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._v("Go full screen")])])])])], 1), _vm._v(" "), _c('img', {
     staticClass: "who-turned-out-the-lights",
     attrs: {
-      "src": "http://i.imgur.com/7hMpv.jpg"
+      "src": "http://i.imgur.com/7hMpv.jpg",
+      "title": "Who turned out the lights?",
+      "alt": "Who turned out the lights?"
     }
   })])
-},staticRenderFns: []}
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('p', [_vm._v("Source and docs on GitHub: "), _c('a', {
+    attrs: {
+      "href": "https://github.com/samknows/dirk"
+    }
+  }, [_vm._v("samknows/dirk")]), _vm._v(".")])
+}]}
 module.exports.render._withStripped = true
 if (true) {
   module.hot.accept()
