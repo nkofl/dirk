@@ -2,6 +2,10 @@
 
 > A simple dashboard layout library powered by Vue, written at [SamKnows].
 
+![](./demo.gif)
+
+You can find a demo of this here: https://samknows.github.io/dirk/
+
 ## Installation
 
 ```
