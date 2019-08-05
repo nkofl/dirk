@@ -219,7 +219,7 @@ Let's add an Edit/Save button to our first example that saves to and loads from 
   
   export default {
     data: () => ({
-      dashboardData: storedData ? JSON.stringify(storedData) : defaultData,
+      dashboardData: storedData ? JSON.parse(storedData) : defaultData,
       editing: false
     }),
     methods: {
