@@ -1,7 +1,7 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
     <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editing="editing"></component>
-    <dashboard-block v-else-if="children.length" v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="childKey(child)" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')"></dashboard-block>
+    <dashboard-block v-else-if="children.length" v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="child.id" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')" @addChild="addChild" @deleteChild="deleteChild" @replaceChild="replaceChild" @updateChild="updateChild" @resizeChild="resizeChild"></dashboard-block>
     <component v-else :is="emptyDashboard" class="dashboard__block__component dashboard__block__component--empty"></component>
 
     <div class="controls" v-if="editing && type === 'panel'" @dragstart="handleDragstart" draggable="true" ref="draggable">
@@ -23,7 +23,10 @@
     width: 200,
   };
 
-  const keyLookup = new WeakMap();
+  const randomId = () => {
+    const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
+    return uint32.toString(16)
+  }
 
   export default {
     name: 'dashboard-block',
@@ -57,135 +60,216 @@
         type: Boolean,
         required: true,
       },
+      id: {
+        required: true
+      }
     },
     data: () => ({
-      state: 'default',
+      state: 'default'
     }),
     methods: {
-      handleAddDrop(e) {
-        e.target.classList.remove('controls__control--active');
-
-        const data = e.dataTransfer.getData('text');
-
-        if (!data) {
-          return;
+      clone () {
+        return {
+          id: this.id,
+          type: this.type || 'horizontal',
+          size: this.size || 1,
+          i: this.i || 0,
+          component: this.component || '',
+          meta: this.meta,
+          children: JSON.parse(JSON.stringify(this.children || [])) // [...(this.children || [])]
         }
-
-        const direction = e.target.className.replace(/.*controls__control--(\S+).*/, '$1');
-
-        const directionMatch = {
-          left: 'horizontal',
-          right: 'horizontal',
-          top: 'vertical',
-          bottom: 'vertical',
-        };
-
-        // We're at the root element, so the type could be wrong
-        if (this.$parent.children.length === 1) {
-          this.$parent.type = directionMatch[direction];
-          this.$parent.$parent.data.type = directionMatch[direction];
+      },
+      resizeChild (e) {
+        for (const child of e) {
+          child.path.unshift(this.i)
         }
-
-        const parentType = this.$parent.type;
-
-        const newComponent = JSON.parse(data);
-
-        if (parentType === directionMatch[direction]) {
-          // This shrinks all the child elements to make room for the new one,
-          // but does so in a way that the smaller ones don't go below the
-          // minimum size
-          const isHorizontal = this.$parent.type === 'horizontal';
-          const parentRect = this.$parent.$refs.block.getBoundingClientRect();
-          const parentSize = isHorizontal ? parentRect.width : parentRect.height;
-          const minSize = minimumSizes[isHorizontal ? 'width' : 'height'];
-          const minPercent = minSize / parentSize;
-
-          /* eslint-disable no-mixed-operators */
-
-          const n = this.$parent.children.length;
-          const newChildSize = 1 / (n + 1);
-
-          const beforeAllExcess = 1 - n * minPercent;
-          const afterAllExcess = 1 - (n + 1) * minPercent;
-
-          if (afterAllExcess < 0) {
-            // @todo something more informative here: there's no space
-            return;
+        this.$emit('resizeChild', e)
+      },
+      updateChild (e) {
+        console.log('updating child')
+        const updatedData = this.clone()
+        updatedData.children[e.data.i] = e.data
+        this.$emit('updateChild', { data: updatedData, remove: e.remove } )
+      },
+      addChild (e) {
+        console.log('adding child')
+        if (e.newComponent && e.direction && typeof e.i !== 'undefined' && e.i >= 0 && e.i < this.children.length) {
+          const remove = e.newComponent.remove || null
+          if (e.newComponent.remove) {
+            delete e.newComponent.remove
           }
-
-          const sizeAdjustFactor = (afterAllExcess - (newChildSize - minPercent)) / beforeAllExcess;
-
-          this.$parent.children.forEach((child) => {
-            /* eslint-disable no-param-reassign */
-            child.size = (child.size - minPercent) * sizeAdjustFactor + minPercent;
-          });
-
-          const spliceI = this.i + ((direction === 'right' || direction === 'bottom') ? 1 : 0);
-
-          this.$parent.children.splice(spliceI, 0, Object.assign(newComponent, {
-            type: 'panel',
-            size: newChildSize,
-          }));
-        } else {
-          const newSelf = {
-            type: 'panel',
-            size: 0.5,
-            component: this.component,
-            meta: this.meta,
+          const updatedData = this.clone()
+          const directionMatch = {
+            left: 'horizontal',
+            right: 'horizontal',
+            top: 'vertical',
+            bottom: 'vertical',
           };
-          const newSibling = Object.assign(newComponent, {
-            type: 'panel',
-            size: 0.5,
-          });
+          // Direction might need switching if there's only one element
+          if (updatedData.children.length === 1) {
+            updatedData.type = directionMatch[e.direction];
+          }
+          if (updatedData.type === directionMatch[e.direction]) {
+            // This shrinks all the child elements to make room for the new one,
+            // but does so in a way that the smaller ones don't go below the
+            // minimum size
+            const isHorizontal = updatedData.type === 'horizontal';
+            const rect = this.$refs.block.getBoundingClientRect();
+            const size = isHorizontal ? rect.width : rect.height;
+            const minSize = minimumSizes[isHorizontal ? 'width' : 'height'];
+            const minPercent = minSize / size;
 
-          const children = (direction === 'right' || direction === 'bottom') ?
-            [newSelf, newSibling] : [newSibling, newSelf];
+            /* eslint-disable no-mixed-operators */
 
-          this.$parent.children.splice(this.i, 1, {
-            type: directionMatch[direction],
-            size: this.size,
-            children,
+            const n = updatedData.children.length;
+            const newChildSize = 1 / (n + 1);
+
+            const beforeAllExcess = 1 - n * minPercent;
+            const afterAllExcess = 1 - (n + 1) * minPercent;
+
+            if (afterAllExcess < 0) {
+              // @todo something more informative here: there's no space
+              return;
+            }
+
+            const sizeAdjustFactor = (afterAllExcess - (newChildSize - minPercent)) / beforeAllExcess;
+            updatedData.children.forEach((child) => {
+              /* eslint-disable no-param-reassign */
+              child.size = (child.size - minPercent) * sizeAdjustFactor + minPercent;
+            });
+
+            const spliceI = e.i + ((e.direction === 'right' || e.direction === 'bottom') ? 1 : 0);
+
+            updatedData.children.splice(spliceI, 0, Object.assign(e.newComponent, {
+              type: 'panel',
+              size: newChildSize
+            }, { id: randomId() }));
+          } else {
+            const newSelf = {
+              type: 'panel',
+              size: 0.5,
+              id: updatedData.children[e.i].id,
+              component: updatedData.children[e.i].component,
+              meta: updatedData.children[e.i].meta,
+            };
+            const newSibling = Object.assign(e.newComponent, {
+              type: 'panel',
+              size: 0.5
+            }, { id: randomId() });
+
+            const children = (e.direction === 'right' || e.direction === 'bottom') ?
+              [newSelf, newSibling] : [newSibling, newSelf];
+
+            updatedData.children.splice(e.i, 1, {
+              type: directionMatch[e.direction],
+              size: updatedData.children[e.i].size,
+              children,
+              id: randomId()
+            });
+          }
+          this.$emit('updateChild', { data: updatedData, remove })
+          this.$emit('change');
+        }
+      },
+      replaceChild (e) {
+        console.log('replacing child')
+        if (typeof e.i !== 'undefined' && e.i >= 0 && e.i < this.children.length) {
+          const updatedData = this.clone()
+          if (e.newComponent) {
+            const remove = e.newComponent.remove || null
+            if (e.newComponent.remove) {
+              delete e.newComponent.remove
+            }
+            Object.assign(updatedData.children[e.i], e.newComponent, { id: randomId() });
+            this.$emit('updateChild', { data: updatedData, remove })
+            this.$emit('change');
+          } else if (e.newComponents) {
+            updatedData.children.splice(e.i, 1, ...e.newComponents);
+            this.$emit('updateChild', { data: updatedData, remove: null })
+            this.$emit('change');
+          }
+        }
+      },
+      deleteChild (e) {
+        console.log('deleting child')
+        const updatedData = this.clone()
+        if (updatedData.children.length === 1) {
+          // only child - just remove it. This can only happen at the top level and results in an empty dashboard
+          updatedData.children.splice(0, 1);
+          this.$emit('updateChild', { data: updatedData, remove: null })
+        } else if (updatedData.children.length === 2) {
+          // going from 2 to 1 children - remove this container and inject remaining element into parent's children directly
+          const sibling = updatedData.children[1 - e.i];
+
+          if (this.$parent.children) { // dummy test to see if parent is another block
+            if (sibling.type === 'panel') {
+              // just inherit the old container's size and replace the container with the child
+              sibling.size = updatedData.size;
+              this.$emit('replaceChild', { newComponent: sibling, i: updatedData.i })
+            } else {
+              // merge children of sibling into parent container
+              const newChildren = sibling.children.map((child) => {
+                return Object.assign({}, child, { size: child.size * updatedData.size })
+              });
+              this.$emit('replaceChild', { newComponents: newChildren, i: updatedData.i })
+            }
+          } else { // otherwise we know it's the root dashboard component and we need to keep or alter the container
+            if (sibling.type === 'panel') {
+              // just leave the one item in the container and take up all the space
+              sibling.size = 1;
+              updatedData.children.splice(e.i, 1);
+            } else {
+              // merge children of sibling into parent container
+              updatedData.children = sibling.children
+              updatedData.type = sibling.type
+            }
+            this.$emit('updateChild', { data: updatedData, remove: null })
+          }
+        } else {
+          const oldItems = updatedData.children.splice(e.i, 1);
+
+          updatedData.children.forEach((child) => {
+            // eslint-disable-next-line no-param-reassign
+            child.size /= 1 - oldItems[0].size;
           });
+          this.$emit('updateChild', { data: updatedData, remove: null })
         }
 
         this.$emit('change');
       },
-      handleReplaceDrop(e) {
-        if (!this.editing) {
-          return;
-        }
-
+      handleAddDrop(e) {
         e.target.classList.remove('controls__control--active');
-
         const data = e.dataTransfer.getData('text');
-
-        // Event has propagated, ignore
-        if (this.type !== 'panel' && this.children.length) {
-          return;
+        if (data && this.editing) {
+          const direction = e.target.className.replace(/.*controls__control--(\S+).*/, '$1');
+          const newComponent = JSON.parse(data);
+          this.$emit('addChild', { newComponent, direction, i: this.i })
         }
-
-        // This is an add that has propagated, not a replace
-        if (e.target.classList.contains('controls__control')) {
-          return;
+      },
+      handleReplaceDrop(e) {
+        e.target.classList.remove('controls__control--active');
+        const data = e.dataTransfer.getData('text');
+        if (
+          data &&
+          this.editing &&
+          !e.target.classList.contains('controls__control') && // Event has propagated, ignore
+          (this.type === 'panel' || !this.children.length) // This is an add that has propagated, not a replace
+        ) {
+          const newComponent = JSON.parse(data);
+          if (this.type === 'panel') {
+            this.$emit('replaceChild', { newComponent, i: this.i })
+          } else {
+            const updatedData = this.clone()
+            // This is a specific case just for empty dashboards
+            updatedData.children.push(Object.assign(newComponent, {
+              type: 'panel',
+              size: 1,
+              id: randomId()
+            }));
+            this.$emit('updateChild', { data: updatedData, remove: null });
+            this.$emit('change');
+          }
         }
-
-        if (!data) {
-          return;
-        }
-
-        const newComponent = JSON.parse(data);
-
-        if (this.type === 'panel') {
-          Object.assign(this.$parent.children[this.i], newComponent);
-        } else {
-          // This is a specific case just for empty dashboards
-          this.children.push(Object.assign(newComponent, {
-            type: 'panel',
-            size: 1,
-          }));
-        }
-
-        this.$emit('change');
       },
       handleDragenter(e) {
         e.target.classList.add('controls__control--active');
@@ -194,58 +278,8 @@
         e.target.classList.remove('controls__control--active');
       },
       handleDelete() {
-        if (this.$parent.children.length === 1) {
-          this.$parent.children.splice(0, 1);
-        } else if (this.$parent.children.length === 2) {
-          const parentParent = this.$parent.$parent;
-
-          if (parentParent.children) {
-            const parentSiblingsPanels = parentParent.children
-              .every((block, i) => i === this.$parent.i || block.type === 'panel');
-            if (parentSiblingsPanels) {
-              const sibling = this.$parent.children[1 - this.i];
-
-              if (sibling.type === 'panel') {
-                sibling.size = this.$parent.size;
-                this.$parent.$parent.children.splice(this.$parent.i, 1, sibling);
-              } else {
-                sibling.children.forEach((child) => {
-                  // eslint-disable-next-line no-param-reassign
-                  child.size *= this.$parent.size;
-                });
-
-                this.$parent.$parent.children.splice(this.$parent.i, 1, ...sibling.children);
-              }
-            } else {
-              const parentObject = parentParent.children[this.$parent.i];
-              const sibling = parentObject.children[1 - this.i];
-              sibling.size = parentObject.size;
-
-              this.$set(parentParent.children, this.$parent.i, sibling);
-            }
-          } else {
-            // We're setting the sibling directly on the root element
-            const rootData = this.$parent.$parent.data;
-
-            const sibling = this.$parent.children[1 - this.i];
-            sibling.size = 1;
-
-            if (sibling.type === 'panel') {
-              rootData.children = [sibling];
-            } else {
-              Object.assign(rootData, sibling);
-            }
-          }
-        } else {
-          this.$parent.children.splice(this.i, 1);
-
-          this.$parent.children.forEach((child) => {
-            // eslint-disable-next-line no-param-reassign
-            child.size /= 1 - this.size;
-          });
-        }
-
-        this.$emit('change');
+        console.log('requesting delete')
+        this.$emit('deleteChild', { i: this.i })
       },
       handleMouseDown(e) {
         const isHorizontal = this.$parent.type === 'horizontal';
@@ -257,7 +291,6 @@
         const previous = this.$parent.children[this.i - 1];
         const previousStartSize = previous.size;
         const currentStartSize = this.size;
-
         const mousemoveHandler = (e2) => {
           e2.preventDefault();
 
@@ -273,13 +306,9 @@
           } else if (previousStartSize + offsetAsPercentage <= minPerc) {
             return;
           }
-
-          previous.size = previousStartSize + offsetAsPercentage;
-          this.$parent.children[this.i].size = currentStartSize - offsetAsPercentage;
-
+          this.$emit('resizeChild', [{ path: [this.i], size: currentStartSize - offsetAsPercentage }, { path: [this.i - 1], size: previousStartSize + offsetAsPercentage }])
           this.$emit('changing');
         };
-
         const mouseupHandler = () => {
           document.removeEventListener('mousemove', mousemoveHandler);
           document.removeEventListener('mouseup', mouseupHandler);
@@ -295,10 +324,10 @@
           return;
         }
 
-        const thisComponent = this.$parent.children[this.i];
         const data = {
-          component: thisComponent.component,
-          meta: thisComponent.meta,
+          component: this.component,
+          meta: this.meta,
+          remove: this.id
         };
 
         e.dataTransfer.setData('text', JSON.stringify(data));
@@ -307,25 +336,16 @@
 
         const dropHandler = (ei) => {
           document.removeEventListener('drop', dropHandler);
-
           if (ei.target !== this.$refs.draggable) {
-            this.handleDelete();
+            // delete has to be done elsewhere because a drag move triggers an add and a delete.
+            // If you try to do both naturally, you can get a race and one won't happen
+            // this.handleDelete();
           } else {
             this.state = 'default';
           }
         };
 
         document.addEventListener('drop', dropHandler);
-      },
-      childKey(child) {
-        let key = keyLookup.get(child);
-
-        if (!key) {
-          key = Math.random();
-          keyLookup.set(child, key);
-        }
-
-        return key;
       }
     },
     computed: {

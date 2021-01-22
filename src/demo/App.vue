@@ -15,7 +15,7 @@
     </div>
 
     <div class="container">
-      <dashboard :data="dashboardData" :component-getter="getComponent" :editing="true" ref="dashboard" @change="dirkChange"></dashboard>
+      <dashboard v-model="dashboardData" :component-getter="getComponent" :editing="true" ref="dashboard" @change="dirkChange"></dashboard>
 
       <div class="control-links">
         <div class="left">
@@ -37,11 +37,18 @@
   import Empty from './Empty.vue';
   import Dashboard from '../Dashboard.vue';
 
+  const randomId = () => {
+    const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
+    return uint32.toString(16)
+  }
+
   const defaultData = {
+    id: randomId(),
     type: 'horizontal',
     size: 1,
     children: [
       {
+        id: randomId(),
         type: 'panel',
         size: 0.4,
         component: 'color',
@@ -50,10 +57,12 @@
         },
       },
       {
+        id: randomId(),
         type: 'vertical',
         size: 0.6,
         children: [
           {
+            id: randomId(),
             type: 'panel',
             size: 0.5,
             component: 'color',
@@ -62,6 +71,7 @@
             },
           },
           {
+            id: randomId(),
             type: 'panel',
             size: 0.5,
             component: 'color',

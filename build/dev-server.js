@@ -29,11 +29,11 @@ app.use(hotMiddleware);
 
 app.use('/static', express.static('./static'));
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 
 console.log('> Starting dev server...');
 devMiddleware.waitUntilValid(() => {
   console.log('> Listening at http://localhost:' + port + '\n');
 });
 
-const server = app.listen(port, 'localhost');
+const server = app.listen(port, '0.0.0.0');
