@@ -86,13 +86,11 @@
         this.$emit('resizeChild', e)
       },
       updateChild (e) {
-        console.log('updating child')
         const updatedData = this.clone()
         updatedData.children[e.data.i] = e.data
         this.$emit('updateChild', { data: updatedData, remove: e.remove } )
       },
       addChild (e) {
-        console.log('adding child')
         if (e.newComponent && e.direction && typeof e.i !== 'undefined' && e.i >= 0 && e.i < this.children.length) {
           const remove = e.newComponent.remove || null
           if (e.newComponent.remove) {
@@ -172,7 +170,6 @@
         }
       },
       replaceChild (e) {
-        console.log('replacing child')
         if (typeof e.i !== 'undefined' && e.i >= 0 && e.i < this.children.length) {
           const updatedData = this.clone()
           if (e.newComponent) {
@@ -191,7 +188,6 @@
         }
       },
       deleteChild (e) {
-        console.log('deleting child')
         const updatedData = this.clone()
         if (updatedData.children.length === 1) {
           // only child - just remove it. This can only happen at the top level and results in an empty dashboard
@@ -278,7 +274,6 @@
         e.target.classList.remove('controls__control--active');
       },
       handleDelete() {
-        console.log('requesting delete')
         this.$emit('deleteChild', { i: this.i })
       },
       handleMouseDown(e) {
