@@ -25,7 +25,6 @@
     }),
     methods: {
       updateChild (e) {
-        console.log('===updating===')
         const purge = (data, parent, index) => {
           if (data.children && data.children.length > 0) {
             const childIndex = data.children.findIndex(child => child.id && e.remove=== child.id)
@@ -124,7 +123,6 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   .dashboard {
-    height: 100%;
 
     &:-webkit-full-screen {
       width: 100%;
