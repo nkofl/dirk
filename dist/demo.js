@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "18f9533385bca98f20fc"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "bfc17e715f85948a76b6"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -10217,7 +10217,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "\n.dashboard[data-v-2871f974] {\n  height: 100%;\n}\n.dashboard[data-v-2871f974]:-webkit-full-screen {\n    width: 100%;\n    height: 100%;\n}\n.lights-off .dashboard[data-v-2871f974]:-webkit-full-screen {\n      background-color: black;\n}\n", ""]);
+exports.push([module.i, "\n.dashboard[data-v-2871f974]:-webkit-full-screen {\n  width: 100%;\n  height: 100%;\n}\n.lights-off .dashboard[data-v-2871f974]:-webkit-full-screen {\n    background-color: black;\n}\n", ""]);
 
 // exports
 
@@ -22944,7 +22944,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   methods: {
     updateChild: function updateChild(e) {
-      console.log('===updating===');
       var purge = function purge(data, parent, index) {
         if (data.children && data.children.length > 0) {
           var childIndex = data.children.findIndex(function (child) {
@@ -23219,13 +23218,11 @@ var randomId = function randomId() {
       this.$emit('resizeChild', e);
     },
     updateChild: function updateChild(e) {
-      console.log('updating child');
       var updatedData = this.clone();
       updatedData.children[e.data.i] = e.data;
       this.$emit('updateChild', { data: updatedData, remove: e.remove });
     },
     addChild: function addChild(e) {
-      console.log('adding child');
       if (e.newComponent && e.direction && typeof e.i !== 'undefined' && e.i >= 0 && e.i < this.children.length) {
         var remove = e.newComponent.remove || null;
         if (e.newComponent.remove) {
@@ -23297,7 +23294,6 @@ var randomId = function randomId() {
       }
     },
     replaceChild: function replaceChild(e) {
-      console.log('replacing child');
       if (typeof e.i !== 'undefined' && e.i >= 0 && e.i < this.children.length) {
         var updatedData = this.clone();
         if (e.newComponent) {
@@ -23318,7 +23314,6 @@ var randomId = function randomId() {
       }
     },
     deleteChild: function deleteChild(e) {
-      console.log('deleting child');
       var updatedData = this.clone();
       if (updatedData.children.length === 1) {
         updatedData.children.splice(0, 1);
@@ -23393,7 +23388,6 @@ var randomId = function randomId() {
       e.target.classList.remove('controls__control--active');
     },
     handleDelete: function handleDelete() {
-      console.log('requesting delete');
       this.$emit('deleteChild', { i: this.i });
     },
     handleMouseDown: function handleMouseDown(e) {
