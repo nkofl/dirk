@@ -1,6 +1,6 @@
 <template>
   <div :class="'dashboard__block dashboard__block--' + type + ' dashboard__block--' + state" :style="{ flexBasis: flexBasis }" ref="block" @drop="handleReplaceDrop">
-    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editing="editing"></component>
+    <component v-if="type === 'panel'" :is="realComponent" v-bind="meta" class="dashboard__block__component" :editing="editing" @updateMeta="updateMeta"></component>
     <dashboard-block v-else-if="children.length" v-for="(child, i) in children" v-bind="child" :component-getter="componentGetter" :key="child.id" :i="i" :editing="editing" @change="$emit('change')" @changing="$emit('changing')" @addChild="addChild" @deleteChild="deleteChild" @replaceChild="replaceChild" @updateChild="updateChild" @resizeChild="resizeChild"></dashboard-block>
     <component v-else :is="emptyDashboard" class="dashboard__block__component dashboard__block__component--empty"></component>
 
@@ -84,6 +84,11 @@
           child.path.unshift(this.i)
         }
         this.$emit('resizeChild', e)
+      },
+      updateMeta (e) {
+        const updatedData = this.clone()
+        updatedData.meta = e
+        this.$emit('updateChild', { data: updatedData, remove: null } )
       },
       updateChild (e) {
         const updatedData = this.clone()

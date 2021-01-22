@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "bfc17e715f85948a76b6"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "141d9ab77853a26bfb7b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -23217,6 +23217,11 @@ var randomId = function randomId() {
 
       this.$emit('resizeChild', e);
     },
+    updateMeta: function updateMeta(e) {
+      var updatedData = this.clone();
+      updatedData.meta = e;
+      this.$emit('updateChild', { data: updatedData, remove: null });
+    },
     updateChild: function updateChild(e) {
       var updatedData = this.clone();
       updatedData.children[e.data.i] = e.data;
@@ -24711,6 +24716,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "dashboard__block__component",
     attrs: {
       "editing": _vm.editing
+    },
+    on: {
+      "updateMeta": _vm.updateMeta
     }
   }, 'component', _vm.meta, false)) : (_vm.children.length) ? _vm._l((_vm.children), function(child, i) {
     return _c('dashboard-block', _vm._b({
