@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "eb603f5a046606c59c02"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "dee62d8124a17e5a74f0"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -23074,6 +23074,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           }
         }
       }
+
+      this.$emit('input', update);
     }
   },
   mounted: function mounted() {

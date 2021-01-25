@@ -89,6 +89,7 @@
         for (const child of e) {
           resize(update, child.path.slice(1), child.size)
         }
+        this.$emit('input', update)
       }
     },
     mounted() {

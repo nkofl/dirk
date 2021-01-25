@@ -1328,6 +1328,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           }
         }
       }
+
+      this.$emit('input', update);
     }
   },
   mounted: function mounted() {
