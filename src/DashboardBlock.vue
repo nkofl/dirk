@@ -336,13 +336,7 @@
 
         const dropHandler = (ei) => {
           document.removeEventListener('drop', dropHandler);
-          if (ei.target !== this.$refs.draggable) {
-            // delete has to be done elsewhere because a drag move triggers an add and a delete.
-            // If you try to do both naturally, you can get a race and one won't happen
-            // this.handleDelete();
-          } else {
-            this.state = 'default';
-          }
+          this.state = 'default';
         };
 
         document.addEventListener('drop', dropHandler);
