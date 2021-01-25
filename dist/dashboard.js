@@ -1708,9 +1708,7 @@ var randomId = function randomId() {
 
       var dropHandler = function dropHandler(ei) {
         document.removeEventListener('drop', dropHandler);
-        if (ei.target !== _this2.$refs.draggable) {} else {
-          _this2.state = 'default';
-        }
+        _this2.state = 'default';
       };
 
       document.addEventListener('drop', dropHandler);

@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "141d9ab77853a26bfb7b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "eb603f5a046606c59c02"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -23454,9 +23454,7 @@ var randomId = function randomId() {
 
       var dropHandler = function dropHandler(ei) {
         document.removeEventListener('drop', dropHandler);
-        if (ei.target !== _this2.$refs.draggable) {} else {
-          _this2.state = 'default';
-        }
+        _this2.state = 'default';
       };
 
       document.addEventListener('drop', dropHandler);
