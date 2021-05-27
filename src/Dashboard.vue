@@ -1,5 +1,5 @@
 <template>
-  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="value" :component-getter="componentGetter" :editing="editing" @change="$emit('change')" @changing="$emit('changing')" @updateChild="updateChild" @resizeChild="resizeChild"></dashboard-block>
+  <dashboard-block :class="'dashboard dashboard--editing dashboard--' + state" v-bind="value" :component-getter="componentGetter" :editing="editing" @change="$emit('change')" @changing="$emit('changing')" @updateChild="updateChild" @resizeChild="resizeChild" @message="message"></dashboard-block>
 </template>
 
 <script type="text/babel">
@@ -24,6 +24,9 @@
       state: 'none'
     }),
     methods: {
+      message (data) {
+        this.$emit('message', data)
+      },
       updateChild (e) {
         const purge = (data, parent, index) => {
           if (data.children && data.children.length > 0) {

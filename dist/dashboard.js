@@ -1197,6 +1197,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     };
   },
   methods: {
+    message: function message(data) {
+      this.$emit('message', data);
+    },
     updateChild: function updateChild(e) {
       var purge = function purge(data, parent, index) {
         if (data.children && data.children.length > 0) {
@@ -1444,6 +1447,9 @@ var randomId = function randomId() {
         component: this.component || '',
         meta: this.meta,
         children: JSON.parse(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_core_js_json_stringify___default()(this.children || [])) };
+    },
+    message: function message(data) {
+      this.$emit('message', data);
     },
     resizeChild: function resizeChild(e) {
       var _iteratorNormalCompletion = true;
@@ -2492,7 +2498,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         return _vm.$emit('changing')
       },
       "updateChild": _vm.updateChild,
-      "resizeChild": _vm.resizeChild
+      "resizeChild": _vm.resizeChild,
+      "message": _vm.message
     }
   }, 'dashboard-block', _vm.value, false))
 },staticRenderFns: []}
@@ -2525,7 +2532,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editing": _vm.editing
     },
     on: {
-      "updateMeta": _vm.updateMeta
+      "updateMeta": _vm.updateMeta,
+      "message": _vm.message
     }
   }, 'component', _vm.meta, false)) : (_vm.children.length) ? _vm._l((_vm.children), function(child, i) {
     return _c('dashboard-block', _vm._b({
