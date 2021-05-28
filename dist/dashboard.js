@@ -2554,7 +2554,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "deleteChild": _vm.deleteChild,
         "replaceChild": _vm.replaceChild,
         "updateChild": _vm.updateChild,
-        "resizeChild": _vm.resizeChild
+        "resizeChild": _vm.resizeChild,
+        "message": _vm.message
       }
     }, 'dashboard-block', child, false))
   }) : _c(_vm.emptyDashboard, {
