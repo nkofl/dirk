@@ -93,20 +93,14 @@
           resize(update, child.path.slice(1), child.size)
         }
         this.$emit('input', update)
-      }
-    },
-    mounted() {
-      document.addEventListener('dragstart', () => {
-        if (this.editing) {
-          this.state = 'dragging';
-        }
-      });
-
-      document.addEventListener('dragover', (e) => {
+      },
+      dragover (e) {
         e.preventDefault();
-      }, false);
-
-      document.addEventListener('drop', (e) => {
+      },
+      dragstart () {
+        this.state = 'dragging';
+      },
+      drop (e) {
         this.state = 'none';
 
         try {
@@ -116,8 +110,27 @@
             e.preventDefault();
           }
         } catch (e) {}
-
-      });
+      }
+    },
+    watch: {
+      editing (value) {
+        if (value) {
+          document.addEventListener('dragstart', this.dragstart);
+          document.addEventListener('dragover', this.dragover, false);
+          document.addEventListener('drop', this.drop);
+        } else {
+          document.removeEventListener('dragstart', this.dragstart);
+          document.removeEventListener('dragover', this.dragover, false);
+          document.removeEventListener('drop', this.drop);
+        }
+      }
+    },
+    mounted() {
+      if (editing) {
+        document.addEventListener('dragstart', this.dragstart);
+        document.addEventListener('dragover', this.dragover, false);
+        document.addEventListener('drop', this.drop);
+      }
     },
     components: {
       DashboardBlock,

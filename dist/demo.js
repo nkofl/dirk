@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "80f8c2e227c0dee35c9c"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "b59b33829107e0da4584"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -23079,23 +23079,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
 
       this.$emit('input', update);
-    }
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    document.addEventListener('dragstart', function () {
-      if (_this.editing) {
-        _this.state = 'dragging';
-      }
-    });
-
-    document.addEventListener('dragover', function (e) {
+    },
+    dragover: function dragover(e) {
       e.preventDefault();
-    }, false);
-
-    document.addEventListener('drop', function (e) {
-      _this.state = 'none';
+    },
+    dragstart: function dragstart() {
+      this.state = 'dragging';
+    },
+    drop: function drop(e) {
+      this.state = 'none';
 
       try {
         var data = JSON.parse(e.dataTransfer.getData('text'));
@@ -23104,7 +23096,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           e.preventDefault();
         }
       } catch (e) {}
-    });
+    }
+  },
+  watch: {
+    editing: function editing(value) {
+      if (value) {
+        document.addEventListener('dragstart', this.dragstart);
+        document.addEventListener('dragover', this.dragover, false);
+        document.addEventListener('drop', this.drop);
+      } else {
+        document.removeEventListener('dragstart', this.dragstart);
+        document.removeEventListener('dragover', this.dragover, false);
+        document.removeEventListener('drop', this.drop);
+      }
+    }
+  },
+  mounted: function mounted() {
+    if (editing) {
+      document.addEventListener('dragstart', this.dragstart);
+      document.addEventListener('dragover', this.dragover, false);
+      document.addEventListener('drop', this.drop);
+    }
   },
 
   components: {
